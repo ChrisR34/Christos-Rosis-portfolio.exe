@@ -1,292 +1,643 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ChristosR Portfolio</title>
-<meta property="og:title" content="Christos Rosis | Software Engineer" />
-<meta property="og:description" content="Building systems that think and communicate" />
-<meta property="og:image" content="https://chrisr34.github.io/Christos-Rosis-portfolio.exe/New logo.png" />
-<meta property="og:url" content="https://chrisr34.github.io/Christos-Rosis-portfolio.exe/" />
-<meta property="og:type" content="website" />
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
-<link rel="icon" type="image/png" href="New logo.png">
-<link rel="stylesheet" href="style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Christos Rosis | Software &amp; Systems</title>
+    <meta
+      name="description"
+      content="Christos Rosis — Computer Science student and production technician building networked software, automated tests and IoT systems."
+    />
+    <meta property="og:title" content="Christos Rosis | Software Engineer" />
+    <meta property="og:description" content="Building systems that think and communicate" />
+    <meta
+      property="og:image"
+      content="https://chrisr34.github.io/Christos-Rosis-portfolio.exe/New logo.png"
+    />
+    <meta property="og:url" content="https://chrisr34.github.io/Christos-Rosis-portfolio.exe/" />
+    <meta property="og:type" content="website" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Syne:wght@400;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" href="New logo.png" />
+    <link rel="stylesheet" href="style.css" />
 
-<!-- Google tag-->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-CVC4PLRF7F"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <!-- Google tag-->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CVC4PLRF7F"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
 
-  gtag('config', 'G-CVC4PLRF7F');
-</script>
-</head>
-<body>
+      gtag("config", "G-CVC4PLRF7F");
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="reading-progress" aria-hidden="true"></div>
 
-<nav>
-  <div class="nav-logo"><img src="New logo.png" style="height: 35px; vertical-align: middle; margin-right: 10px;" />// Christos Rosis Portfolio</div>
-  <ul class="nav-links">
-    <li><a href="#about">About</a></li>
-    <li><a href="#skills">Skills</a></li>
-    <li><a href="#projects">Projects</a></li>
-    <li><a href="#experience">Experience</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-</nav>
+    <nav aria-label="Main navigation">
+      <a href="#main" class="nav-logo"
+        ><img
+          alt="Christos Rosis logo"
+          src="New logo.png"
+          style="height: 35px; vertical-align: middle; margin-right: 10px"
+        />// Christos Rosis<span class="nav-suffix"> Portfolio</span></a
+      >
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="nav-links"
+        hidden
+      >
+        Menu <span aria-hidden="true">+</span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
 
-<!-- Hero -->
-<section class="hero">
-  <div class="hero-inner">
-    <div class="hero-tag">CS STUDENT, SOFTWARE ENGINEER &amp; PRODUCTION TECHNICIAN @ VCT DESIGN & ENGINEERING</div>
-    <h1>Building systems<br>that <span class="accent">think</span> and<br><span class="accent2">communicate</span></h1>
-    <p class="hero-desc">
-      I bridge hands-on engineering with software development and complex problem solving.
-      Ready to transition into a full-time software engineering role where I can apply my unique blend of skills and experience to build resilient, efficient systems that make an impact.
-    </p>
-    <div class="hero-btns">
-      <a href="#projects" class="btn btn-primary">VIEW MY WORK</a>
-      <a href="#contact" class="btn btn-outline">GET IN TOUCH</a>
-    </div>
-    <div class="status">
-      <span class="status-dot"></span>
-      CURRENTLY STUDYING @ KINGSTON UNIVERSITY — BSC COMPUTER SCIENCE
-    </div>
-    <div class="status">
-      <span class="status-dot"></span>
-      FREELANCE SOFTWARE DEVELOPER, BUILD.SYSTEMS.THINK.SOLVE PROBLEMS.  
-    </div>
-    <div class="status">
-      <span class="status-dot"></span>
-      VCT DESIGN & ENGINEERING — PRODUCTION TECHNICIAN
-    </div>
-  </div>
-</section>
-
-<!-- About -->
-<section id="about">
-  <div class="section">
-    <div class="section-header">
-      <span class="section-num">01 //</span>
-      <h2>About</h2>
-      <div class="section-line"></div>
-    </div>
-    <div class="about-grid">
-      <div class="about-text">
-        <p>I am <strong>currently a Production Technician @ VCT Design & Engineering with 4 years of engineering experience</strong> my love for technology and problem solving drove me to pursue a BSc in Computer Science <strong>@ Kingston University.</strong> I bring an unusual combination to the table — years of hands-on engineering experience alongside my academic background in programming and systems design.</p>
-        <p>At VCT Design & Engineering, I have gained valuable experience in production environments while also contributing to software development projects during the summer break from my studies.</p>
-        <p>I think deeply about how things work, why they fail, and how to make them better. Whether debugging or optimising a production line, the mindset is the same: <strong>calm, systematic, methodical, analytical, relentless</strong>.</p>
-        <p>I am actively building toward a full-time role in tech — particularly in areas where <strong>hardware meets software</strong>: embedded systems, networked applications, and low-level tooling, or what is necessary to achieve the desired outcome.</p>
-        <p><strong>Programming and engineering </strong>  is my passion, I love technology and making complicated things work, so <strong>let's build something amazing together!</strong></p>
-      </div>
-      <div class="about-stats">
-        <div class="stat">
-          <span class="stat-num">BSc</span>
-          <span class="stat-label">COMPUTER SCIENCE</span>
+    <main id="main">
+      <!-- Hero -->
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-inner">
+          <div class="hero-tag">SOFTWARE / SYSTEMS / HANDS-ON ENGINEERING</div>
+          <h1 id="hero-title">
+            Building systems<br />that <span class="accent">think</span> and<br /><span
+              class="accent2"
+              >communicate.</span
+            >
+          </h1>
+          <p class="hero-desc">
+            I'm Christos. A Computer Science student and production technician turning real-world
+            engineering problems into reliable software.
+          </p>
+          <div class="hero-btns">
+            <a href="#projects" class="btn btn-primary"
+              >EXPLORE MY WORK <span aria-hidden="true">↗</span></a
+            >
+            <a href="Christos Rosis CV.pdf" download class="btn btn-outline">DOWNLOAD CV</a>
+          </div>
+          <div class="status">
+            <span class="status-dot"></span>OPEN TO SOFTWARE ENGINEERING OPPORTUNITIES
+          </div>
+          <p class="hero-footnote">
+            BSc Computer Science · Kingston University<br />Production Technician · VCT Design &amp;
+            Engineering
+          </p>
         </div>
-        <div class="stat">
-          <span class="stat-num">C#</span>
-          <span class="stat-label">PRIMARY LANGUAGE</span>
-        </div>
-        <div class="stat">
-          <span class="stat-num">TCP</span>
-          <span class="stat-label">SERVER DEVELOPMENT</span>
-        </div>
-        <div class="stat">
-          <span class="stat-num">INSTRUMENT CALIBRATION</span>
-          <span class="stat-label">METEOROLOGICAL EQUIPMENT / HUMIDITY GENERATORS</span>
-        </div>
+        <aside class="terminal" aria-labelledby="terminal-title">
+          <div class="window-bar">
+            <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <h2 id="terminal-title">christos / workspace</h2>
+            <span class="window-badge">INTERACTIVE</span>
+          </div>
+          <div class="terminal-body">
+            <p class="terminal-command"><span>visitor@portfolio</span> ~ $ whoami</p>
+            <p class="terminal-intro">An engineer who likes making<br />complicated things work.</p>
+            <div class="terminal-profile">
+              <p><span>focus</span> C# · networked systems · IoT</p>
+              <p><span>approach</span> build → test → improve</p>
+            </div>
+            <div
+              id="terminal-output"
+              class="terminal-output"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              Try a command below, or type help.
+            </div>
+            <div class="terminal-shortcuts" aria-label="Terminal shortcuts" hidden>
+              <button type="button" data-command="projects">projects ↗</button
+              ><button type="button" data-command="about">about ↗</button
+              ><button type="button" data-command="contact">contact ↗</button>
+            </div>
+            <form id="terminal-form" autocomplete="off" hidden>
+              <label for="terminal-input"
+                ><span aria-hidden="true">~ $ </span
+                ><span class="sr-only">Portfolio command</span></label
+              ><input
+                id="terminal-input"
+                name="command"
+                spellcheck="false"
+                maxlength="60"
+                placeholder="Type help…"
+                aria-describedby="terminal-hint"
+              /><button type="submit" aria-label="Run command">↵</button>
+            </form>
+            <noscript
+              ><p class="demo-note">
+                Enable JavaScript for the optional terminal. Use the main menu to explore the
+                portfolio.
+              </p></noscript
+            >
+            <p class="terminal-hint" id="terminal-hint">
+              A little shortcut. Everything is also in the menu.
+            </p>
+          </div>
+        </aside>
+      </section>
+      <div class="section-divider" aria-hidden="true">
+        <span>REAL PROBLEMS.</span><span>THOUGHTFUL SOFTWARE.</span><span>BUILT TO WORK.</span>
       </div>
-    </div>
-  </div>
-</section>
 
-<!-- Skills -->
-<section id="skills">
-  <div class="section">
-    <div class="section-header">
-      <span class="section-num">02 //</span>
-      <h2>Skills</h2>
-      <div class="section-line"></div>
-    </div>
-    <div class="skills-grid">
-      <div class="skill-card">
-        <div class="skill-icon">// LANGUAGES</div>
-        <div class="skill-title">Programming</div>
-        <p style="font-size:0.82rem;color:var(--muted);line-height:1.6;">Comfortable writing production-grade code with a focus on reliability and systems thinking.</p>
-        <div class="skill-tags">
-          <span class="tag">C#</span>
-          <span class="tag">PYTHON</span>
-          <span class="tag">SQL</span>
-          <span class="tag">JAVA</span>
-          <span class="tag">HTML/CSS/JavaScript</span>
-          <span class="tag">Node.js</span>
+      <!-- About -->
+      <section id="about">
+        <div class="section">
+          <div class="section-header">
+            <span class="section-num">01 //</span>
+            <h2>About</h2>
+            <div class="section-line"></div>
+          </div>
+          <div class="about-grid">
+            <div class="about-text">
+              <p>
+                I am
+                <strong
+                  >currently a Production Technician @ VCT Design & Engineering with hands-on
+                  engineering experience.</strong
+                >
+                My love for technology and problem solving drove me to pursue a BSc in Computer
+                Science <strong>@ Kingston University.</strong> I bring an unusual combination to
+                the table — years of hands-on engineering experience alongside my academic
+                background in programming and systems design.
+              </p>
+              <p>
+                At VCT Design & Engineering, I have gained valuable experience in production
+                environments while also contributing to software development projects during the
+                summer break from my studies.
+              </p>
+              <p>
+                I think deeply about how things work, why they fail, and how to make them better.
+                Whether debugging or optimising a production line, the mindset is the same:
+                <strong>calm, systematic, methodical, analytical, relentless</strong>.
+              </p>
+              <p>
+                I am actively building toward a full-time role in tech — particularly in areas where
+                <strong>hardware meets software</strong>: embedded systems, networked applications,
+                and low-level tooling, or what is necessary to achieve the desired outcome.
+              </p>
+              <p>
+                <strong>Programming and engineering </strong> is my passion, I love technology and
+                making complicated things work, so
+                <strong>let's build something amazing together!</strong>
+              </p>
+            </div>
+            <div class="about-stats">
+              <div class="stat">
+                <span class="stat-num">BSc</span>
+                <span class="stat-label">COMPUTER SCIENCE</span>
+              </div>
+              <div class="stat">
+                <span class="stat-num">C#</span>
+                <span class="stat-label">PRIMARY LANGUAGE</span>
+              </div>
+              <div class="stat">
+                <span class="stat-num">TCP</span>
+                <span class="stat-label">SERVER DEVELOPMENT</span>
+              </div>
+              <div class="stat">
+                <span class="stat-num stat-small">INSTRUMENT<br />CALIBRATION</span>
+                <span class="stat-label">METEOROLOGICAL EQUIPMENT / HUMIDITY GENERATORS</span>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="skill-card">
-        <div class="skill-icon">// NETWORKING</div>
-        <div class="skill-title">TCP / Networked Systems</div>
-        <p style="font-size:0.82rem;color:var(--muted);line-height:1.6;">Built and tested multi-port TCP servers with delegate-driven data processing and custom test clients.</p>
-        <div class="skill-tags">
-          <span class="tag">TCP/IP</span>
-          <span class="tag">SOCKETS</span>
-          <span class="tag">LISTENERS</span>
-          <span class="tag">DELEGATES</span>
+      </section>
+
+      <!-- Skills -->
+      <section id="skills">
+        <div class="section">
+          <div class="section-header">
+            <span class="section-num">02 //</span>
+            <h2>Skills</h2>
+            <div class="section-line"></div>
+          </div>
+          <div class="skills-grid">
+            <div class="skill-card">
+              <div class="skill-icon">// LANGUAGES</div>
+              <div class="skill-title">Programming</div>
+              <p style="font-size: 0.82rem; color: var(--muted); line-height: 1.6">
+                Comfortable writing production-grade code with a focus on reliability and systems
+                thinking.
+              </p>
+              <div class="skill-tags">
+                <span class="tag">C#</span>
+                <span class="tag">PYTHON</span>
+                <span class="tag">SQL</span>
+                <span class="tag">JAVA</span>
+                <span class="tag">HTML/CSS/JavaScript</span>
+                <span class="tag">Node.js</span>
+              </div>
+              <details class="skill-evidence">
+                <summary>C# in practice</summary>
+                <p>
+                  The TCP server and automated test client show how I apply C# to communication and
+                  validation. <a href="#tcp-project">Explore ↗</a>
+                </p>
+              </details>
+            </div>
+            <div class="skill-card">
+              <div class="skill-icon">// NETWORKING</div>
+              <div class="skill-title">TCP / Networked Systems</div>
+              <p style="font-size: 0.82rem; color: var(--muted); line-height: 1.6">
+                Built and tested multi-port TCP servers with delegate-driven data processing and
+                custom test clients.
+              </p>
+              <div class="skill-tags">
+                <span class="tag">TCP/IP</span>
+                <span class="tag">SOCKETS</span>
+                <span class="tag">LISTENERS</span>
+                <span class="tag">DELEGATES</span>
+              </div>
+              <details class="skill-evidence">
+                <summary>Follow the data</summary>
+                <p>
+                  Explore the TCP server and try the request / response simulation.
+                  <a href="#tcp-project">Explore ↗</a>
+                </p>
+              </details>
+            </div>
+            <div class="skill-card">
+              <div class="skill-icon">// ENGINEERING</div>
+              <div class="skill-title">Production & Hardware</div>
+              <p style="font-size: 0.82rem; color: var(--muted); line-height: 1.6">
+                Years of hands-on production experience with an engineering-first approach to
+                problem solving.
+              </p>
+              <div class="skill-tags">
+                <span class="tag">FAULT DIAGNOSIS</span>
+                <span class="tag">TESTING</span>
+                <span class="tag">EYE FOR DETAIL</span>
+                <span class="tag">PROBLEM SOLVING</span>
+                <span class="tag">CREATIVE THINKING</span>
+              </div>
+              <details class="skill-evidence">
+                <summary>Where it comes from</summary>
+                <p>
+                  Instrument testing, fault diagnosis and production work at VCT Design &amp;
+                  Engineering. <a href="#experience">Explore ↗</a>
+                </p>
+              </details>
+            </div>
+            <div class="skill-card">
+              <div class="skill-icon">// DESIGN</div>
+              <div class="skill-title">Systems Design</div>
+              <p style="font-size: 0.82rem; color: var(--muted); line-height: 1.6">
+                Comfortable thinking across the full stack — from data flow and thread safety to
+                interface design and error handling.
+              </p>
+              <div class="skill-tags">
+                <span class="tag">OOP</span>
+                <span class="tag">MULTITHREADING</span>
+                <span class="tag">ERROR HANDLING</span>
+              </div>
+              <details class="skill-evidence">
+                <summary>See a system in action</summary>
+                <p>
+                  The IoT dashboard connects sensor hardware, a Node.js server and a browser
+                  interface. <a href="#iot-project">Explore ↗</a>
+                </p>
+              </details>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="skill-card">
-        <div class="skill-icon">// ENGINEERING</div>
-        <div class="skill-title">Production & Hardware</div>
-        <p style="font-size:0.82rem;color:var(--muted);line-height:1.6;">Years of hands-on production experience with an engineering-first approach to problem solving.</p>
-        <div class="skill-tags">
-          <span class="tag">FAULT DIAGNOSIS</span>
-          <span class="tag">TESTING</span>
-          <span class="tag">EYE FOR DETAIL</span>
-          <span class="tag">PROBLEM SOLVING</span>
-          <span class="tag">CREATIVE THINKING</span>
+      </section>
+
+      <!-- Projects -->
+      <section id="projects" aria-labelledby="projects-title">
+        <div class="section">
+          <div class="section-header">
+            <span class="section-num">03 //</span>
+            <h2 id="projects-title">Selected work</h2>
+            <div class="section-line"></div>
+          </div>
+          <p class="section-intro">
+            Software that connects, measures and validates. Explore the thinking behind it—or try a
+            small demonstration.
+          </p>
+          <div class="projects-grid">
+            <article class="project-card project-featured" id="tcp-project">
+              <div class="project-copy">
+                <div class="project-num">
+                  01 / NETWORKED SYSTEMS <span class="project-badge">FEATURED</span>
+                </div>
+                <h3 class="project-title">TCP API Server</h3>
+                <p class="project-desc">
+                  Turning instrument commands into reliable communication. A multi-port C# server
+                  with delegate-based data processing, background threads and an automated test
+                  client.
+                </p>
+                <div class="skill-tags">
+                  <span class="tag">C#</span><span class="tag">TCP/IP</span
+                  ><span class="tag">MULTITHREADING</span>
+                </div>
+                <details class="project-details">
+                  <summary>Behind the build <span aria-hidden="true">+</span></summary>
+                  <div>
+                    <p>
+                      <strong>The problem</strong> — Communicating with instruments over a local
+                      network while handling different commands and ports.
+                    </p>
+                    <p>
+                      <strong>The approach</strong> — Delegate-based command handling and background
+                      thread management, with a separate client for repeatable validation.
+                    </p>
+                    <p>
+                      <strong>My focus</strong> — Clear data flow, error handling and testable
+                      communication.
+                    </p>
+                  </div>
+                </details>
+              </div>
+              <div class="demo-panel" aria-labelledby="tcp-demo-title">
+                <div class="demo-heading">
+                  <h4 id="tcp-demo-title">Follow a command</h4>
+                  <span class="demo-label">BROWSER SIMULATION</span>
+                </div>
+                <p class="demo-caption">
+                  A simplified illustration of the request / response flow.
+                </p>
+                <div
+                  class="packet-flow"
+                  aria-label="Client sends a command through the server to the instrument"
+                >
+                  <div class="flow-node" data-node="client">
+                    <span aria-hidden="true">&gt;_</span>CLIENT
+                  </div>
+                  <div class="flow-connector" aria-hidden="true"><i></i></div>
+                  <div class="flow-node" data-node="server">
+                    <span aria-hidden="true">{ }</span>SERVER
+                  </div>
+                  <div class="flow-connector" aria-hidden="true"><i></i></div>
+                  <div class="flow-node" data-node="instrument">
+                    <span aria-hidden="true">◎</span>INSTRUMENT
+                  </div>
+                </div>
+                <label for="tcp-command" class="control-label">Choose a simulated command</label>
+                <div class="demo-controls">
+                  <select id="tcp-command" disabled>
+                    <option value="READ:TEMP">READ:TEMP</option>
+                    <option value="READ:HUM">READ:HUM</option>
+                    <option value="PING">PING</option>
+                    <option value="INVALID">INVALID (error handling)</option></select
+                  ><button id="send-command" type="button" disabled class="btn btn-primary">
+                    SEND <span aria-hidden="true">↗</span>
+                  </button>
+                </div>
+                <div
+                  class="demo-log"
+                  id="tcp-log"
+                  role="status"
+                  aria-live="polite"
+                  aria-atomic="true"
+                >
+                  <span class="log-prompt">READY</span> Select a command, then press Send.
+                </div>
+                <noscript
+                  ><p class="demo-note">Enable JavaScript to run this simulation.</p></noscript
+                >
+                <p class="demo-note">
+                  Illustrative commands and sample data. No connection to real equipment.
+                </p>
+              </div>
+            </article>
+            <article class="project-card" id="iot-project">
+              <div class="project-num">02 / CONNECTED HARDWARE</div>
+              <h3 class="project-title">Temperature &amp; Humidity Dashboard</h3>
+              <p class="project-desc">
+                An ESP32 + DHT22 dashboard combining sensor readings, a weather forecast and a live
+                message log through MQTT and WebSockets.
+              </p>
+              <div class="sensor-preview">
+                <div class="sensor-top">
+                  <span class="demo-label">SIMULATED SENSOR PREVIEW</span
+                  ><button id="sensor-toggle" type="button" hidden>Pause updates</button>
+                </div>
+                <div class="sensor-readings">
+                  <div>
+                    <span class="sensor-label">TEMPERATURE</span
+                    ><strong><span id="temperature">22.4</span><small> °C</small></strong>
+                  </div>
+                  <div>
+                    <span class="sensor-label">HUMIDITY</span
+                    ><strong><span id="humidity">48.2</span><small> %</small></strong>
+                  </div>
+                </div>
+                <svg
+                  class="sensor-sparkline"
+                  viewBox="0 0 400 52"
+                  role="img"
+                  aria-label="Illustrative sensor trend"
+                >
+                  <path d="M0 40H400 M0 20H400" class="spark-grid" />
+                  <polyline
+                    id="sensor-line"
+                    points="0,32 30,30 60,35 90,24 120,28 150,22 180,26 210,16 240,21 270,15 300,19 330,10 360,17 400,14"
+                  />
+                </svg>
+                <p class="demo-note" id="sensor-status">
+                  Sample data · not connected to a live sensor
+                </p>
+              </div>
+              <div class="skill-tags">
+                <span class="tag">ESP32</span><span class="tag">Node.js</span
+                ><span class="tag">MQTT</span><span class="tag">WebSockets</span>
+              </div>
+              <details class="project-details">
+                <summary>Behind the build <span aria-hidden="true">+</span></summary>
+                <div>
+                  <p>
+                    <strong>Data path</strong> — ESP32 and DHT22 sensor → MQTT → Node.js / Express →
+                    browser updates through WebSockets.
+                  </p>
+                  <p>
+                    <strong>Interface</strong> — Temperature and humidity readings, Open-Meteo
+                    forecasts and a live message log.
+                  </p>
+                </div>
+              </details>
+            </article>
+            <article class="project-card" id="test-project">
+              <div class="project-num">03 / AUTOMATED VALIDATION</div>
+              <h3 class="project-title">Automated Test Client</h3>
+              <p class="project-desc">
+                Repeatable checks without manual input. A C# client generates structured test data
+                for registered delegates, sends it across configured ports and validates the server
+                response.
+              </p>
+              <div class="test-preview" aria-label="Illustrative validation workflow">
+                <div class="test-row">
+                  <span class="step-number">01</span>
+                  <div><strong>Generate</strong><span>Structured data for each delegate</span></div>
+                  <span class="step-symbol" aria-hidden="true">↘</span>
+                </div>
+                <div class="test-row">
+                  <span class="step-number">02</span>
+                  <div><strong>Send</strong><span>Connect across configured ports</span></div>
+                  <span class="step-symbol" aria-hidden="true">↘</span>
+                </div>
+                <div class="test-row">
+                  <span class="step-number">03</span>
+                  <div><strong>Validate</strong><span>Check the server response</span></div>
+                  <span class="step-symbol" aria-hidden="true">✓</span>
+                </div>
+              </div>
+              <div class="skill-tags">
+                <span class="tag">C#</span><span class="tag">TEST DATA</span
+                ><span class="tag">VALIDATION</span>
+              </div>
+              <details class="project-details">
+                <summary>Behind the build <span aria-hidden="true">+</span></summary>
+                <div>
+                  <p>
+                    <strong>The goal</strong> — Exercise registered delegates across the TCP
+                    server's configured ports without typing individual commands.
+                  </p>
+                  <p>
+                    <strong>The approach</strong> — Generate structured inputs, send them
+                    automatically and validate the response. This client complements the TCP server
+                    above.
+                  </p>
+                </div>
+              </details>
+            </article>
+            <article class="project-card portfolio-project" id="portfolio-project">
+              <div>
+                <div class="project-num">04 / THE SITE YOU'RE EXPLORING</div>
+                <h3 class="project-title">A small window into how I build.</h3>
+                <p class="project-desc">
+                  A responsive portfolio made with HTML, CSS and JavaScript. Interactive
+                  demonstrations make the engineering easier to explore.
+                </p>
+                <div class="skill-tags">
+                  <span class="tag">HTML</span><span class="tag">CSS</span
+                  ><span class="tag">JavaScript</span>
+                </div>
+              </div>
+              <a
+                class="btn btn-outline"
+                href="https://github.com/ChrisR34/Christos-Rosis-portfolio.exe"
+                >VIEW SOURCE <span aria-hidden="true">↗</span></a
+              >
+            </article>
+          </div>
         </div>
-      </div>
-      <div class="skill-card">
-        <div class="skill-icon">// DESIGN</div>
-        <div class="skill-title">Systems Design</div>
-        <p style="font-size:0.82rem;color:var(--muted);line-height:1.6;">Comfortable thinking across the full stack — from data flow and thread safety to interface design and error handling.</p>
-        <div class="skill-tags">
-          <span class="tag">OOP</span>
-          <span class="tag">MULTITHREADING</span>
-          <span class="tag">ERROR HANDLING</span>
+      </section>
 
+      <!-- Experience -->
+      <section id="experience">
+        <div class="section">
+          <div class="section-header">
+            <span class="section-num">04 //</span>
+            <h2>Experience</h2>
+            <div class="section-line"></div>
+          </div>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-date">PRESENT</div>
+              <div class="timeline-role">BSc Computer Science</div>
+              <div class="timeline-org">Kingston University, London</div>
+              <p class="timeline-desc">
+                Studying programming, systems design, algorithms, databases and software
+                engineering. Applying academic knowledge directly to personal and work-related
+                engineering projects.
+              </p>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-date">ONGOING</div>
+              <div class="timeline-role">Software Developer</div>
+              <div class="timeline-org">Freelance</div>
+              <p class="timeline-desc">
+                Various software development projects, including web applications and embedded
+                systems programming. Developed a TCP API Server for meteorological instruments, that
+                takes commands and controls the instrument fully via command line interface
+                terminal.
+              </p>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-date">ONGOING</div>
+              <div class="timeline-role">Production Technician</div>
+              <div class="timeline-org">VCT Design & Engineering</div>
+              <p class="timeline-desc">
+                Hands-on engineering role with focus on fault diagnosis, instrument testing, and
+                production optimisation. Some software development experience with calibration
+                instruments.
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
+      </section>
 
-<!-- Projects -->
-<section id="projects">
-  <div class="section">
-    <div class="section-header">
-      <span class="section-num">03 //</span>
-      <h2>Projects</h2>
-      <div class="section-line"></div>
-    </div>
-    <div class="projects-grid">
-      <div class="project-card">
-        <div class="project-num">PROJECT_01</div>
-        <div class="project-title">TCP API Server</div>
-        <p class="project-desc">A multi-port TCP server built in C# with delegate-based data matching, background thread management, and automated test client. Designed for instrument communication over a local network.</p>
-        <div class="skill-tags">
-          <span class="tag">C#</span>
-          <span class="tag">TCP</span>
-          <span class="tag">DELEGATES</span>
-          <span class="tag">MULTITHREADING</span>
+      <!-- Contact -->
+      <section id="contact">
+        <div class="section">
+          <div class="section-header">
+            <span class="section-num">05 //</span>
+            <h2>Contact</h2>
+            <div class="section-line"></div>
+          </div>
+          <div class="contact-inner">
+            <div class="contact-text">
+              <h3>Let's build<br />something <span class="accent">together</span></h3>
+              <p>
+                I am open to opportunities in software engineering, embedded systems, systems design
+                and any other software related roles. Drop me a message, let's make it happen!
+              </p>
+              <div class="contact-links">
+                <a href="mailto:christosrosis@yahoo.com" class="contact-link"
+                  ><span></span> Email
+                </a>
+                <a href="https://linkedin.com/in/christosr-cr/" class="contact-link"
+                  ><span></span> LINKEDIN</a
+                >
+                <a href="https://github.com/ChrisR34" class="contact-link"><span></span> GITHUB</a>
+                <a href="mailto:k2453210@kingston.ac.uk" class="contact-link"
+                  ><span></span> KINGSTON UNIVERSITY</a
+                >
+              </div>
+
+              <a
+                href="Christos Rosis CV.pdf"
+                download
+                class="btn btn-outline"
+                style="margin-top: 20px; display: inline-block"
+              >
+                Download CV
+              </a>
+
+              <div class="status" style="margin-top: 16px">
+                <span class="status-dot"></span>
+                OPEN TO OPPORTUNITIES
+              </div>
+
+              <div class="status" style="margin-top: 16px">
+                <span class="status-dot"></span>
+                RESPONSE TIME: WITHIN 24H
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="project-card">
-        <div class="project-num">PROJECT_02</div>
-        <div class="project-title">Automated Test Client</div>
-        <p class="project-desc">A self-testing client that connects across all configured ports for my TCP API Server that generates structured test data for each registered delegate, sends it, and validates the server response — fully automated, no manual input required.</p>
-        <div class="skill-tags">
-          <span class="tag">C#</span>
-          <span class="tag">RANDOM DATA GEN</span>
-          <span class="tag">VALIDATION</span>
-        </div>
-      </div>
-      <div class="project-card">
-        <div class="project-num">PROJECT_03</div>
-        <div class="project-title">Christos Rosis portfolio website</div>
-        <p class="project-desc">My personal portfolio website built with HTML, CSS, and JavaScript to showcase my projects and experience.</p>
-        <div class="skill-tags">
-          <span class="tag">HTML</span>
-          <span class="tag">CSS</span>
-          <span class="tag">GITHUB</span>
-        </div>
-      </div>
-      <div class="project-card">
-        <div class="project-num">PROJECT_04</div>
-        <div class="project-title">Temperature/Humidity Sensor Dashboard</div>
-        <p class="project-desc">A real-time IoT sensor dashboard, displaying live Temperature/humidity  from ESP32 + DHT22 Sensor, Real-time weather forecast, Live message Log</p>
-        <div class="skill-tags">
-          <span class="tag">HTML,CSS,JavaScript</span>
-          <span class="tag">Node.js,Express,WebSockets</span>
-          <span class="tag">MQTT,OPEN METEO API</span>
-          <span class="tag">GITHUB</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+      </section>
+    </main>
 
-<!-- Experience -->
-<section id="experience">
-  <div class="section">
-    <div class="section-header">
-      <span class="section-num">04 //</span>
-      <h2>Experience</h2>
-      <div class="section-line"></div>
-    </div>
-    <div class="timeline">
-      <div class="timeline-item">
-        <div class="timeline-date">PRESENT</div>
-        <div class="timeline-role">BSc Computer Science</div>
-        <div class="timeline-org">Kingston University, London</div>
-        <p class="timeline-desc">Studying programming, systems design, algorithms, databases and software engineering. Applying academic knowledge directly to personal and work-related engineering projects.</p>
+    <footer>
+      <div class="footer-left">// BUILT WITH INTENT — 2026 ©</div>
+      <div class="footer-left">
+        SOFTWARE DEVELOPER/CS STUDENT @ KINGSTON UNIVERSITY— &amp; PRODUCTION TECHNICIAN @ VCT
+        Design & Engineering
       </div>
-      <div class="timeline-item">
-        <div class="timeline-date">ONGOING</div>
-        <div class="timeline-role">Software Developer</div>
-        <div class="timeline-org">Freelance</div>
-        <p class="timeline-desc">Various software development projects, including web applications and embedded systems programming. Developed a TCP API Server for meteorological instruments, that takes commands and controls the instrument fully via command line interface terminal.</p>
-      </div>
-      <div class="timeline-item">
-        <div class="timeline-date">ONGOING</div>
-        <div class="timeline-role">Production Technician</div>
-        <div class="timeline-org">VCT Design & Engineering</div>
-        <p class="timeline-desc">Hands-on engineering role with focus on fault diagnosis, instrument testing, and production optimisation. Some software development experience with calibration instruments.</p>
-      </div>      
-    </div>
-  </div>
-</section>
+    </footer>
 
-<!-- Contact -->
-<section id="contact">
-  <div class="section">
-    <div class="section-header">
-      <span class="section-num">05 //</span>
-      <h2>Contact</h2>
-      <div class="section-line"></div>
-    </div>
-    <div class="contact-inner">
-      <div class="contact-text">
-        <h3>Let's build<br>something <span class="accent">together</span></h3>
-        <p>I am open to opportunities in software engineering, embedded systems, systems design and any other software related roles. Drop me a message, let's make it happen!</p>
-        <div class="contact-links">
-          <a href="mailto:christosrosis@yahoo.com" class="contact-link"><span></span> Email </a>
-          <a href="https://linkedin.com/in/christosr-cr/" class="contact-link"><span></span> LINKEDIN</a>
-          <a href="https://github.com/ChrisR34" class="contact-link"><span></span> GITHUB</a>
-          <a href="mailto:k2453210@kingston.ac.uk" class="contact-link"><span></span> KINGSTON UNIVERSITY</a>
-        </div>
-
-        <a href="Christos Rosis CV.pdf" download class="btn btn-outline" style="margin-top: 20px; display: inline-block;"> Download CV </a>
-
-        <div class="status" style="margin-top: 16px;">
-        <span class="status-dot"></span>
-        OPEN TO OPPORTUNITIES
-      </div>
-      
-      <div class="status" style="margin-top: 16px;">
-        <span class="status-dot"></span>
-        RESPONSE TIME: WITHIN 24H
-      </div>
-   </div>
-</section>
-
-<footer>
-  <div class="footer-left">// BUILT WITH INTENT — 2026 ©</div>
-  <div class="footer-left"> SOFTWARE DEVELOPER/CS STUDENT @ KINGSTON UNIVERSITY— &amp; PRODUCTION TECHNICIAN @ VCT Design & Engineering</div>
-</footer>
-
-<script src="script.js"></script>
-
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
