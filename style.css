@@ -1595,3 +1595,171 @@ footer {
     padding-top: 13rem;
   }
 }
+/* Theme colours */
+:root {
+  color-scheme: dark;
+  --nav-bg: rgba(8, 12, 16, 0.9);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #fafbfe;
+  --surface: #ffffff;
+  --surface2: #edf2f8;
+  --text: #172333;
+  --muted: #526174;
+  --accent: #007b8c;
+  --accent2: #7136cd;
+  --border: rgba(0, 100, 120, 0.2);
+  --nav-bg: rgba(250, 251, 254, 0.93);
+}
+
+nav {
+  background: var(--nav-bg);
+  gap: 1rem;
+}
+
+/* Dark / Light control */
+.theme-switch {
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 3px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+}
+
+.theme-switch button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 11px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: 0.75rem var(--mono);
+  cursor: pointer;
+}
+
+.theme-switch button[aria-pressed="true"] {
+  background: var(--surface2);
+  color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+.theme-switch button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Light versions of elements with fixed dark backgrounds */
+[data-theme="light"] .terminal,
+[data-theme="light"] .project-featured {
+  background: linear-gradient(145deg, #ffffff, #edf2f8);
+  border-color: var(--border);
+  box-shadow: 0 20px 60px rgba(35, 55, 80, 0.1);
+}
+
+[data-theme="light"] .window-bar {
+  background: rgba(0, 100, 120, 0.035);
+}
+
+[data-theme="light"] .terminal-command,
+[data-theme="light"] .terminal-profile,
+[data-theme="light"] .flow-node,
+[data-theme="light"] .demo-log {
+  color: var(--text);
+}
+
+[data-theme="light"] .terminal-profile span,
+[data-theme="light"] .sensor-readings > div + div small,
+[data-theme="light"] .step-symbol {
+  color: var(--accent2);
+}
+
+[data-theme="light"] .packet-flow,
+[data-theme="light"] .sensor-preview,
+[data-theme="light"] .test-preview,
+[data-theme="light"] .demo-log,
+[data-theme="light"] .demo-controls select {
+  background: var(--surface2);
+  border-color: var(--border);
+}
+
+[data-theme="light"] .demo-log.is-error {
+  color: #994000;
+  border-color: #994000;
+}
+
+[data-theme="light"] .status {
+  color: #237741;
+}
+
+[data-theme="light"] .spark-grid {
+  stroke: rgba(23, 35, 51, 0.1);
+}
+
+[data-theme="light"] body::after {
+  opacity: 0.12;
+}
+
+/* Keep headline left and interactive board right on desktop */
+@media (min-width: 801px) {
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .hero-inner,
+  .terminal {
+    min-width: 0;
+  }
+}
+
+/* Give the navigation enough space for the new control */
+@media (min-width: 801px) and (max-width: 1200px) {
+  nav {
+    flex-wrap: wrap;
+  }
+
+  .nav-links {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .theme-switch {
+    margin-left: auto;
+  }
+
+  .hero {
+    padding-top: 12rem;
+  }
+}
+
+@media (max-width: 800px) {
+  .nav-logo {
+    flex: 1;
+  }
+
+  .theme-switch {
+    order: 2;
+  }
+
+  .nav-links {
+    order: 3;
+  }
+
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    padding-top: 11rem;
+  }
+
+  .terminal {
+    width: 100%;
+  }
+}
