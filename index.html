@@ -51,7 +51,6 @@
   --p-inv-accent: #007b8c; --p-inv-accent-ink: #fafbfe; --p-inv-action: #007b8c; --p-inv-action-ink: #fafbfe;
 }
 </style>
-<link rel="stylesheet" href="assets/layout/demo.css">
 <link rel="stylesheet" href="assets/ui/base.css">
 <link rel="stylesheet" href="assets/ui/window/fragment.css">
 <link rel="stylesheet" href="assets/ui/terminal-run/fragment.css">
@@ -65,26 +64,25 @@
 <link rel="modulepreload" href="assets/moments/line-carries-colour/moment.js">
 <!-- page CSS: only inside visuals -->
 <style>
-/* the hero art: the page's ground with one soft cyan light */
-.hero__art { background:
-    radial-gradient(70% 60% at 18% 12%, color-mix(in oklab, var(--p-accent) 16%, var(--p-surface)), transparent 70%),
-    radial-gradient(60% 50% at 90% 100%, color-mix(in oklab, var(--p-accent) 10%, var(--p-bg)), transparent 70%),
-    var(--p-surface); }
-.hero__art > .ly-piece--note { left: var(--s-6); bottom: var(--s-6); width: 300px; z-index: 2; }
-.d-note__line { display: flex; align-items: center; gap: 10px; padding: 7px 0; font-size: 13px; color: #3d4247; border-top: 1px solid rgb(0 0 0 / .06); }
-.d-note__line:first-of-type { border-top: 0; }
-.d-note__line i { width: 18px; height: 18px; border-radius: 50%; flex: none; display: grid; place-items: center; background: #e2f6f9; color: #00606d; font-style: normal; font-size: 13px; font-weight: 500; }
-.d-note__line b { font-weight: 500; color: #16181a; }
-.hero__proof { font-size: var(--t-small); color: var(--muted); }
-.ly-piece--main .d-row { grid-template-columns: 36px minmax(0, 1fr) 72px 96px; }
-.ly-piece--main .d-main { padding-right: var(--ly-cut-room); }
-.d-row .d-thumb { display: grid; place-items: center; font: 500 12px/1 var(--font-mono); color: #00606d; background: #e2f6f9; }
-.d-win--dark .d-row .d-thumb { color: #7eeefc; background: rgb(0 229 255 / .12); }
-.d-win--dark .d-row b { color: #eceef0; }
-.d-win--dark .d-tabs span.is-on { background: rgb(255 255 255 / .08); color: #fff; }
-.d-row b { font-family: var(--font-mono); }
-@media (max-width: 639px) { .ly-piece--main .d-row { grid-template-columns: 36px minmax(0, 1fr) 96px; } }
-@media (max-width: 1023px) { .hero__art > .ly-piece--note { left: var(--s-4); bottom: var(--s-4); width: 270px; } }
+/* hero: one big object in the middle on a soft cyan glow (the reference's layout) */
+.hero--orbit { position: relative; overflow: hidden; background: radial-gradient(45% 55% at 64% 46%, color-mix(in oklab, var(--p-accent) 20%, transparent), transparent 70%), var(--bg); }
+.hero__gl { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.hero--orbit { display: flex; flex-direction: column; }
+.hero.hero--orbit > .wrap.orbit { position: relative; z-index: 1; flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr auto; gap: var(--s-6); justify-items: start; }
+.orbit__foot { justify-self: stretch; }
+@media (max-width: 639px) { .hero__gl { opacity: .35; } }
+.orbit__intro { max-width: 30ch; font-size: var(--t-lead); line-height: 1.45; color: var(--muted); }
+.orbit__main { align-self: end; display: grid; gap: var(--s-6); }
+.hero--orbit h1 { font-size: clamp(44px, 6.4vw, 104px); line-height: .96; max-width: 9.5ch; margin: 0; }
+.orbit__soft { color: color-mix(in oklab, var(--p-accent) 55%, var(--p-ink)); }
+.orbit__foot { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-5); margin: 0; padding-top: var(--s-5); border-top: 1px solid var(--line); }
+.orbit__foot dt { font-size: var(--t-small); color: var(--muted); } .orbit__foot dd { margin: 0; }
+@media (max-width: 639px) { .orbit__foot { grid-template-columns: 1fr 1fr; } .orbit__foot > :last-child { display: none; } .orbit__intro { font-size: 16px; } }
+/* the ESP32 board fills its split frame */
+.esp32__gl { display: block; width: 100%; height: 100%; }
+/* section fades: added by site.js only, so nothing hides without script or under reduced motion */
+.rise { opacity: 0; transform: translateY(28px); transition: opacity .9s ease, transform 1.1s cubic-bezier(.16, 1, .3, 1); transition-delay: calc(var(--i, 0) * 90ms); }
+.rise.is-in { opacity: 1; transform: none; }
 
 /* app-frame (sections-library.md, app-frame) */
 .app.ui { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); margin-top: var(--s-7); background: var(--u-bg); border: 1px solid var(--u-border); border-radius: var(--u-r); box-shadow: var(--u-shadow); }
@@ -111,13 +109,13 @@
 .theme-toggle { background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: pointer; min-height: 44px; }
 @media (max-width: 639px) { #experience, #skills { --hm: 2; } .nav__actions .theme-toggle { display: none; } }
 #experience .rows__name::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #4ade80; margin-right: var(--s-3); vertical-align: 1px; }
+.footer__legal { align-items: center; }
 @media (max-width: 359px) { .nav .nav__name { display: none; } }
 #skills .skills-cols { margin-top: var(--s-7); }
 #skills .skills-cols p + p { margin-top: var(--s-2); }
-#skills .skills-panel { --p-h: 380px; margin-top: var(--s-7); }
+#skills .skills-panel { --p-h: 380px; margin-top: var(--s-7); background: var(--p-surface); border: 1px solid var(--line); }
 @media (max-width: 639px) { #skills .skills-panel { --p-h: 300px; margin-top: var(--s-6); } }
-/* the phone's short hero frame keeps the log's first row whole */
-@media (max-width: 639px) { .ly-piece--main .d-tabs, .ly-piece--main .d-row:nth-child(n+2) { display: none; } }
+
 </style>
 </head>
 <body>
@@ -158,44 +156,20 @@
 </header>
 
 <main id="top">
-  <section class="hero hero--collage" data-enter aria-labelledby="hero-h">
-    <div class="wrap"><div class="hero-text grid hero__grid">
-      <div class="hero__text span-5">
-        <h1 id="hero-h">Software developer for C# and IoT</h1>
-        <p class="hero__lead">I’m Christos Rosis. I write C# servers that talk to lab instruments, the clients that test them, and sensor dashboards on the ESP32.</p>
+  <section class="hero hero--orbit" data-enter aria-labelledby="hero-h">
+    <canvas class="hero__gl" data-gl="network" aria-hidden="true"></canvas>
+    <div class="wrap orbit">
+      <p class="orbit__intro">I’m Christos Rosis. I write C# servers that talk to lab instruments, the clients that test them, and sensor dashboards on the ESP32.</p>
+      <div class="orbit__main">
+        <h1 id="hero-h"><span class="orbit__soft">Software developer for</span> C# and IoT</h1>
         <div class="btn-row"><a class="btn btn--primary" href="Christos Rosis CV.pdf" download>Download CV<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a><a class="btn btn--secondary" href="#projects">See the projects</a></div>
-        <p class="hero__proof">BSc Computer Science at Kingston University, London.</p>
       </div>
-      <div class="hero__art span-6 start-7" role="img" aria-label="The TCP server's command log answering temperature and humidity requests on three ports, and a test client run that passed">
-        <div class="ly-piece ly-piece--main d-win d-win--dark" aria-hidden="true">
-          <div class="d-win__bar"><span class="d-win__dots"><i></i><i></i><i></i></span><span>TcpApiServer · instrument bench</span></div>
-          <div class="d-win__body">
-            <div class="d-side">
-              <span class="is-on"><i></i>Command log</span><span><i></i>Delegates</span><span><i></i>Clients</span><span><i></i>Errors</span>
-              <span class="d-side__label">Ports</span><span><i></i>5000</span><span><i></i>5001</span><span><i></i>5002</span>
-            </div>
-            <div class="d-main">
-              <div class="d-main__head"><h4>Command log</h4><span class="d-btn">Listening</span></div>
-              <div class="d-tabs"><span class="is-on">All</span><span>Port 5000</span><span>Errors</span></div>
-              <div class="d-rows">
-                <div class="d-row"><span class="d-thumb">&gt;_</span><div><b>READ:TEMP</b><small>Port 5000 · bench client</small></div><span class="num">21.6 °C</span><span class="d-chip">Replied</span></div>
-                <div class="d-row"><span class="d-thumb">&gt;_</span><div><b>READ:HUM</b><small>Port 5000 · bench client</small></div><span class="num">48.2 %</span><span class="d-chip">Replied</span></div>
-                <div class="d-row"><span class="d-thumb">&gt;_</span><div><b>SET:RH 50</b><small>Port 5001 · generator</small></div><span class="num">OK</span><span class="d-chip">Replied</span></div>
-                <div class="d-row"><span class="d-thumb">&gt;_</span><div><b>PING</b><small>Port 5002 · test client</small></div><span class="num">PONG</span><span class="d-chip">Replied</span></div>
-                <div class="d-row"><span class="d-thumb">&gt;_</span><div><b>READ:DEWPT</b><small>Port 5000 · bench client</small></div><span class="num">10.1 °C</span><span class="d-chip">Replied</span></div>
-                <div class="d-row"><span class="d-thumb">&gt;_</span><div><b>STATUS</b><small>Port 5001 · generator</small></div><span class="num">READY</span><span class="d-chip">Replied</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="ly-piece ly-piece--note d-card" aria-hidden="true" data-ly-steps="700">
-          <div class="d-card__row"><h5>Test client run</h5><span class="d-chip" data-step data-step-at="4">Passed</span></div>
-          <div class="d-note__line" data-step><i>✓</i><span><b>Inputs generated</b> for every delegate</span></div>
-          <div class="d-note__line" data-step><i>✓</i><span>Sent on <b>ports 5000 to 5002</b></span></div>
-          <div class="d-note__line" data-step><i>✓</i><span>Every reply <b>validated</b></span></div>
-        </div>
-      </div>
-    </div></div>
+      <dl class="orbit__foot">
+        <div><dt>BSc Computer Science</dt><dd>Kingston University</dd></div>
+        <div><dt>London</dt><dd><time data-clock>London time</time></dd></div>
+        <div><dt>Open to</dt><dd>Junior software roles</dd></div>
+      </dl>
+    </div>
   </section>
 
   <section class="section" id="projects" aria-labelledby="projects-h">
@@ -287,7 +261,7 @@
           </ul>
         </div>
         <div class="frame frame--split span-6 start-7">
-          <div class="dg" data-diagram data-dg-still><script type="application/json">{"layout": "lanes", "size": "card", "alt": "An ESP32 with a DHT22 sensor sends readings over MQTT to a Node.js server, which feeds live readings, a forecast and a message log in the browser.", "curve": "curve", "input": {"label": "ESP32", "icon": "si:espressif", "meta": "DHT22"}, "core": {"label": "Node.js server", "icon": "nodejs"}, "lanes": [{"label": "Live readings", "icon": "ui:activity", "meta": "WebSockets", "done": true}, {"label": "Forecast", "icon": "ui:cloud", "meta": "Open-Meteo", "done": true}, {"label": "Message log", "icon": "ui:list", "meta": "MQTT", "done": true}]}</script></div>
+          <canvas class="esp32__gl" data-gl="esp32" role="img" aria-label="An ESP32 development board with its metal RF shield, printed antenna and two rows of pins"></canvas>
         </div>
       </div>
     </div>
@@ -316,16 +290,25 @@
                 <span class="ui-chip ui-chip--plain ui-code__chip" data-code-chip>3 delegates</span>
               </div>
               <pre class="ui-code__pre"><code><span class="ui-code__ln" data-n="14"><span class="k">public void</span> <span class="f">Register</span>(<span class="k">string</span> cmd, Handler h)</span>
-<span class="ui-code__ln" data-n="15">  =&gt; _handlers[cmd] = h;</span>
-<span class="ui-code__ln" data-n="16"></span>
-<span class="ui-code__ln" data-n="17"><span class="k">public string</span> <span class="f">Route</span>(<span class="k">string</span> line)</span>
-<span class="ui-code__ln" data-n="18">{</span>
-<span class="ui-code__ln is-mark" data-n="19">  <span class="k">var</span> (cmd, arg) = <span class="f">Parse</span>(line);</span>
-<span class="ui-code__ln" data-n="20" data-note="Finds the delegate for the command.">  <span class="k">if</span> (_handlers.<span class="f">TryGetValue</span>(cmd, <span class="k">out var</span> h))</span>
-<span class="ui-code__ln" data-n="21">    <span class="k">return</span> <span class="f">h</span>(arg);</span>
-<span class="ui-code__ln" data-n="22">  <span class="c">// unknown commands get an error, never a crash</span></span>
-<span class="ui-code__ln" data-n="23" data-note="Answers unknown commands with an error.">  <span class="k">return</span> <span class="n">$"ERR:UNKNOWN {cmd}"</span>;</span>
-<span class="ui-code__ln" data-n="24">}</span></code></pre>
+<span class="ui-code__ln" data-n="15">  =&gt; _handlers.<span class="f">Add</span>(cmd, h);</span>
+<span class="ui-code__ln" data-n="16"><span class="k">public string</span> <span class="f">Route</span>(<span class="k">string</span> line)</span>
+<span class="ui-code__ln" data-n="17">{</span>
+<span class="ui-code__ln is-mark" data-n="18">  <span class="k">var</span> (cmd, arg) = <span class="f">Parse</span>(line);</span>
+<span class="ui-code__ln" data-n="19" data-note="Finds the delegate for the command.">  <span class="k">if</span> (_handlers.<span class="f">TryGetValue</span>(cmd, <span class="k">out var</span> h))</span>
+<span class="ui-code__ln" data-n="20">    <span class="k">return</span> <span class="f">h</span>(arg);</span>
+<span class="ui-code__ln" data-n="21">  <span class="c">// unknown commands get an error, never a crash</span></span>
+<span class="ui-code__ln" data-n="22" data-note="Answers unknown commands with an error.">  <span class="k">return</span> <span class="n">$"ERR:UNKNOWN {cmd}"</span>;</span>
+<span class="ui-code__ln" data-n="23">}</span>
+<span class="ui-code__ln" data-n="24"><span class="k">private static</span> (<span class="k">string</span>, <span class="k">string</span>) <span class="f">Parse</span>(<span class="k">string</span> line)</span>
+<span class="ui-code__ln" data-n="25">{</span>
+<span class="ui-code__ln" data-n="26">  <span class="k">var</span> parts = line.<span class="f">Trim</span>().<span class="f">Split</span>(<span class="n">' '</span>, <span class="n">2</span>);</span>
+<span class="ui-code__ln" data-n="27">  <span class="k">var</span> cmd = parts.<span class="f">ElementAt</span>(<span class="n">0</span>).<span class="f">ToUpperInvariant</span>();</span>
+<span class="ui-code__ln" data-n="28">  <span class="k">var</span> arg = parts.Length &gt; <span class="n">1</span> ? parts.<span class="f">ElementAt</span>(<span class="n">1</span>) : <span class="n">""</span>;</span>
+<span class="ui-code__ln" data-n="29">  <span class="k">return</span> (cmd, arg);</span>
+<span class="ui-code__ln" data-n="30">}</span>
+<span class="ui-code__ln" data-n="31"><span class="c">// each port gets its own listener on a background thread</span></span>
+<span class="ui-code__ln" data-n="32"><span class="k">public void</span> <span class="f">Listen</span>(<span class="k">int</span> port) =&gt;</span>
+<span class="ui-code__ln" data-n="33">  <span class="k">new</span> <span class="f">Thread</span>(() =&gt; <span class="f">Serve</span>(port)) { IsBackground = <span class="k">true</span> }.<span class="f">Start</span>();</span></code></pre>
               <div class="ui-code__hint" data-code-hint><span class="ui-dot"></span><span data-code-text>Splits the line into a command and its argument.</span></div>
             </div>
           </div></div>
@@ -354,7 +337,7 @@
     <div class="closing__cta close--type">
       <div class="section-head">
         <h2 id="close-h">Looking for a junior software role</h2>
-        <p class="t-small muted">Software, embedded and networked systems. Websites/personal projects.Dont waste time I reply within 24 hours.</p>
+        <p class="t-small muted">Software, embedded and networked systems. Websites and personal projects too. I reply within 24 hours.</p>
       </div>
       <a class="btn btn--primary btn--xl btn--wide" href="Christos Rosis CV.pdf" download>Download CV<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
     </div>
@@ -394,6 +377,7 @@
 <script type="module" src="assets/motion/motion.js"></script>
 <script type="module" src="assets/layout/layout.js"></script>
 <script type="module" src="assets/diagrams/mount.js"></script>
+<script type="module" src="site.js"></script>
 <!-- Google tag -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-CVC4PLRF7F"></script>
 <script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag("js", new Date()); gtag("config", "G-CVC4PLRF7F");</script>
