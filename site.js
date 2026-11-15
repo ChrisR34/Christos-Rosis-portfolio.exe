@@ -19,7 +19,9 @@ if (!still) {
   cv.setAttribute("aria-hidden", "true");
   document.body.prepend(cv);
   const ctx = cv.getContext("2d");
-  const GAP = 44, R = 150, PUSH = 46;
+  // phones (small screen or touch) get a gentler version: F scales the push, the ripple and the light
+  const phone = matchMedia("(max-width: 639px), (pointer: coarse)").matches, F = phone ? 0.6 : 1;
+  const GAP = 44, R = phone ? 120 : 150, PUSH = 46 * F;
   let W = 0, H = 0, dots = [], colour = "#00e5ff";
   const readColour = () => { colour = getComputedStyle(root).getPropertyValue("--p-accent").trim() || colour; };
   const layout = () => {
@@ -45,7 +47,7 @@ if (!still) {
     ctx.clearRect(0, 0, W, H);
     for (const r of rings) {
       r.t++; r.rad = 12 + (r.t / RING_T) * RING_R;
-      ctx.strokeStyle = colour; ctx.lineWidth = 2; ctx.globalAlpha = 0.5 * (1 - r.t / RING_T);
+      ctx.strokeStyle = colour; ctx.lineWidth = 2; ctx.globalAlpha = 0.5 * F * (1 - r.t / RING_T);
       ctx.beginPath(); ctx.arc(r.x, r.y, r.rad, 0, Math.PI * 2); ctx.stroke();
     }
     rings = rings.filter((r) => r.t < RING_T);
@@ -59,10 +61,10 @@ if (!still) {
       for (const r of rings) {
         const dx = d.x0 - r.x, dy = d.y0 - r.y, dist = Math.hypot(dx, dy) || 1;
         const w = Math.max(0, 1 - Math.abs(dist - r.rad) / 24);
-        if (w) { txp += (dx / dist) * w * 14; typ += (dy / dist) * w * 14; near = Math.max(near, w * 0.8); }
+        if (w) { txp += (dx / dist) * w * 14 * F; typ += (dy / dist) * w * 14 * F; near = Math.max(near, w * 0.8); }
       }
       d.x += (txp - d.x) * 0.12; d.y += (typ - d.y) * 0.12;
-      ctx.globalAlpha = Math.min(1, 0.13 + 0.5 * near);
+      ctx.globalAlpha = Math.min(1, 0.13 + 0.5 * F * near);
       ctx.beginPath(); ctx.arc(d.x, d.y, 1.4, 0, Math.PI * 2); ctx.fill();
     }
     ctx.globalAlpha = 1;

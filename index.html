@@ -123,6 +123,13 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 5; pointer-events
 /* the theme switch is a plain nav word, not a native button box */
 .theme-toggle { background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: pointer; min-height: 44px; }
 @media (max-width: 639px) { .nav__actions .theme-toggle { display: none; } }
+/* compact layout at every width: sections hug their content instead of filling a whole screen (the hero stays one screen) */
+main > section.section:not(.hero), footer.footer.closing { height: auto; min-height: 0; }
+main > section.section:not(.hero) { --padt: 88px; --padb: 48px; }
+@media (max-width: 639px) { main > section.section:not(.hero) { --padt: 72px; --padb: 32px; } }
+main > section.section:not(.hero) .fill { flex: 0 0 auto; min-height: auto; height: auto; }
+/* phones: the pointer glow at 60%, matching the gentler dot effect */
+@media (max-width: 639px), (pointer: coarse) { body::after { opacity: .6; } }
 #experience .rows__name::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #4ade80; margin-right: var(--s-3); vertical-align: 1px; }
 .footer__legal { align-items: center; }
 /* hero window and sensor diagram: frames sized to what they hold, centred beside the words */
