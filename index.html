@@ -136,7 +136,13 @@ footer.closing > .wrap { grid-template-rows: auto auto; align-content: start; }
 @media (min-width: 1024px) { #experience .grid { align-items: center; } #experience .frame--split { aspect-ratio: auto; height: 520px; } }
 /* the phone's short hero frame keeps the log's first row whole */
 @media (max-width: 639px) {
-  .ly-piece--main .d-tabs { display: none; }
+  .ly-piece--main .d-tabs, .ly-piece--main .d-row .num { display: none; }
+  /* nothing cut on a phone: the hero window inside its frame, the code window the frame's width with wrapped lines */
+  .hero__art > .ly-piece--main { width: calc(100% - 2 * var(--s-4)); }
+  #experience .at-rise { --w: calc(100% - 32px) !important; }
+  #experience .ui-code__pre, #experience .ui-code__ln { white-space: pre-wrap; overflow-wrap: anywhere; }
+  #experience .ui-code__pre { font-size: 12px; }
+  #experience .ui-code__tab + .ui-code__tab { display: none; }
   /* the .fill grids take their content height on a phone, so the section grows instead of overlapping */
   main > section:is(#iot, #experience, #skills) .fill { flex: 0 0 auto; min-height: auto; height: auto; }
   /* phone: each section one screen that grows with its content, frames sized to what they hold */
@@ -285,7 +291,7 @@ footer.closing > .wrap { grid-template-rows: auto auto; align-content: start; }
             </div>
             <div class="ui-term__screen" data-term-screen>
               <div class="ui-term__track" data-term-track>
-                <div class="ui-term__ln ui-term__cmd"><span class="ui-term__cwd">~/<span class="ui-term__up">tcp-api/</span>TestClient</span><span class="ui-term__sig">$</span><span class="ui-term__typed" data-term-cmd>dotnet run --ports 5000-5002</span></div>
+                <div class="ui-term__ln ui-term__cmd"><span class="ui-term__cwd">~/<span class="ui-term__up">tcp-api/</span>TestClient</span><span class="ui-term__sig">$</span><span class="ui-term__typed" data-term-cmd>dotnet run</span></div>
                 <div class="ui-term__ln ui-term__meter" data-term-out data-term-meter><span class="ui-term__bar" style="--p:1"><i></i></span><span class="ui-term__count" data-term-count>5 of 5 delegates</span></div>
                 <div class="ui-term__ln ui-term__log" data-term-out data-term-step><svg class="ui-term__tick" viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 8.4 2.8 2.8 6.2-6.4"/></svg><span class="ui-term__path">ReadTemperature :5000</span><span class="ui-term__n">12 cases</span><span class="ui-term__t">84ms</span></div>
                 <div class="ui-term__ln ui-term__log" data-term-out data-term-step><svg class="ui-term__tick" viewBox="0 0 16 16" aria-hidden="true"><path d="m3.5 8.4 2.8 2.8 6.2-6.4"/></svg><span class="ui-term__path">ReadHumidity :5000</span><span class="ui-term__n">12 cases</span><span class="ui-term__t">79ms</span></div>
@@ -430,7 +436,7 @@ footer.closing > .wrap { grid-template-rows: auto auto; align-content: start; }
     addEventListener("load", sync); sync();
   })();
 </script>
-<script type="module" src="assets/system.js"></script>
+<script type="module" src="assets/system.js?v=2"></script>
 <script type="module" src="assets/motion/motion.js"></script>
 <script type="module" src="assets/layout/layout.js"></script>
 <script type="module" src="assets/diagrams/mount.js"></script>

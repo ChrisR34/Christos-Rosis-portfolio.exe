@@ -486,7 +486,7 @@ async function visuals() {
     import(new URL('ui/ui.js', HERE).href).then(m => m.default),
   ]);
   const name = el => el.dataset.uiLoad || el.dataset.ui || '';
-  const loops = el => !phone && !!el.closest('[data-ui-loop], [data-ui-cycles]');
+  const loops = el => !!el.closest('[data-ui-loop], [data-ui-cycles]');   // site edit: loops play on phones too (owner's request)
   // a fragment that does not loop is held on its finished picture as soon as its own load resolves
   frags.forEach(el => { if (!loops(el)) el.setAttribute('data-ui-still', ''); });
   const opts = el => { try { return JSON.parse(el.dataset.uiOpts || '{}'); } catch { return {}; } };
