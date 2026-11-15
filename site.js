@@ -13,8 +13,7 @@ if (!still) {
   const move = () => {
     queued = false;
     const p = scrollY / Math.max(1, root.scrollHeight - innerHeight);
-    root.style.setProperty("--gx", `${50 + 28 * Math.sin(p * Math.PI * 3)}%`);
-    root.style.setProperty("--gy", `${40 + 18 * Math.cos(p * Math.PI * 4)}%`);
+    root.style.setProperty("--gy", `${50 + 12 * Math.cos(p * Math.PI * 4)}%`);
   };
   addEventListener("scroll", () => { if (!queued) { queued = true; requestAnimationFrame(move); } }, { passive: true });
   move();

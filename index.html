@@ -115,13 +115,15 @@
 @media (max-width: 639px) { .app.ui { height: 340px; } }
 /* the cyan glow follows the reader down the page (site.js moves --gx/--gy with the scroll) */
 body::after { content: ""; position: fixed; inset: 0; z-index: 5; pointer-events: none; mix-blend-mode: screen;
-  background: radial-gradient(38vmax circle at var(--gx, 70%) var(--gy, 40%), rgb(0 229 255 / .13), transparent 70%); }
+  background: radial-gradient(38vmax circle at 50% var(--gy, 50%), rgb(0 229 255 / .13), transparent 70%); }
 :root[data-theme="light"] body::after { display: none; }
 /* the theme switch is a plain nav word, not a native button box */
 .theme-toggle { background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: pointer; min-height: 44px; }
 @media (max-width: 639px) { #experience, #skills { --hm: 2; } .nav__actions .theme-toggle { display: none; } }
 #experience .rows__name::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #4ade80; margin-right: var(--s-3); vertical-align: 1px; }
 .footer__legal { align-items: center; }
+/* the code window's frame only as tall as the code, centred beside the roles */
+@media (min-width: 1024px) { #experience .grid { align-items: center; } #experience .frame--split { aspect-ratio: auto; height: 520px; } }
 /* the phone's short hero frame keeps the log's first row whole */
 @media (max-width: 639px) { .ly-piece--main .d-tabs, .ly-piece--main .d-row:nth-child(n+2) { display: none; } }
 @media (max-width: 359px) { .nav .nav__name { display: none; } }
@@ -319,7 +321,7 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 5; pointer-events
           <p><a class="link" href="https://linkedin.com/in/christosr-cr/">See my LinkedIn profile</a></p>
         </div>
         <div class="frame frame--split span-6 start-7" role="img" aria-label="C# code that registers a delegate for each instrument command and answers unknown commands with an error">
-          <div class="stage stage--fade-br"><div class="at-rise to-edge" style="--w: 460px; --ay: 56px" data-ui-loop>
+          <div class="stage stage--fade-br"><div class="at-rise to-edge" style="--w: 460px; --ay: 32px" data-ui-loop>
             <div class="ui ui-panel ui-code" data-ui="code" aria-hidden="true">
               <div class="ui-code__tabs">
                 <span class="ui-code__tab is-on"><i class="ui-code__lang">C#</i>CommandRouter.cs</span>
