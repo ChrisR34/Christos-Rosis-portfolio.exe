@@ -45,10 +45,10 @@
 }
 /* the site's light theme, from start.mjs brand with the old light colours */
 :root[data-theme="light"] {
-  --p-bg: #fafbfe; --p-surface: #edf2f8; --p-ink: #172333; --p-muted: #526174;
-  --p-accent: #007b8c; --p-accent-ink: #fafbfe; --p-action: #007b8c; --p-action-ink: #fafbfe;
+  --p-bg: #e9eef3; --p-surface: #dde4ec; --p-ink: #172333; --p-muted: #4b596b;
+  --p-accent: #006c79; --p-accent-ink: #f4f7fa; --p-action: #006c79; --p-action-ink: #fafbfe;
   --p-inv-bg: #172333; --p-inv-surface: #24303f; --p-inv-ink: #fafbfe; --p-inv-muted: #9ba2ab;
-  --p-inv-accent: #007b8c; --p-inv-accent-ink: #fafbfe; --p-inv-action: #007b8c; --p-inv-action-ink: #fafbfe;
+  --p-inv-accent: #006c79; --p-inv-accent-ink: #fafbfe; --p-inv-action: #006c79; --p-inv-action-ink: #fafbfe;
 }
 </style>
 <link rel="stylesheet" href="assets/layout/demo.css">
@@ -112,10 +112,14 @@
 .app.ui { height: 400px; }
 @media (max-width: 1023px) { .app.ui { height: 520px; } }
 @media (max-width: 639px) { .app.ui { height: 300px; } }
-/* the cyan glow follows the reader down the page (site.js moves --gx/--gy with the scroll) */
+/* the cyan glow sits fixed in the middle of the screen, so it travels with the reader */
 body::after { content: ""; position: fixed; inset: 0; z-index: 5; pointer-events: none; mix-blend-mode: screen;
-  background: radial-gradient(38vmax circle at 50% var(--gy, 50%), rgb(0 229 255 / .13), transparent 70%); }
-:root[data-theme="light"] body::after { display: none; }
+  background: radial-gradient(15vmax circle at var(--mx, 50%) var(--my, 50%), rgb(0 229 255 / .08), transparent 70%); }
+/* background: the dot field site.js draws (dots pushed away from the pointer) */
+.bg-dots { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 4; pointer-events: none; }
+/* light theme: screen blending cannot show on white, so the teal accent tints instead */
+:root[data-theme="light"] body::after { mix-blend-mode: multiply;
+  background: radial-gradient(15vmax circle at var(--mx, 50%) var(--my, 50%), rgb(0 123 140 / .13), transparent 70%); }
 /* the theme switch is a plain nav word, not a native button box */
 .theme-toggle { background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: pointer; min-height: 44px; }
 @media (max-width: 639px) { .nav__actions .theme-toggle { display: none; } }

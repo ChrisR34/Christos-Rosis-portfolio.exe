@@ -1,4 +1,4 @@
-// Section fades and the cyan glow that drifts as the page scrolls.
+// Section fades: each block rises once as it comes into view.
 const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 if (!still) {
@@ -7,14 +7,74 @@ if (!still) {
   const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); } }), { threshold: 0.12 });
   items.forEach((el, i) => { el.classList.add("rise"); el.style.setProperty("--i", i % 3); io.observe(el); });
 
-  // the glow swings left and right and bobs as you scroll, so it seems to travel with you
+}
+
+
+// The glow and the dot field. Where the cursor or a finger goes the glow appears and the dots are pushed
+// out of its way (like pepper on water from a soapy finger), then drift back.
+// Reduced motion: the dots are drawn once, still.
+{
   const root = document.documentElement;
-  let queued = false;
-  const move = () => {
-    queued = false;
-    const p = scrollY / Math.max(1, root.scrollHeight - innerHeight);
-    root.style.setProperty("--gy", `${50 + 12 * Math.cos(p * Math.PI * 4)}%`);
+  const cv = Object.assign(document.createElement("canvas"), { className: "bg-dots" });
+  cv.setAttribute("aria-hidden", "true");
+  document.body.prepend(cv);
+  const ctx = cv.getContext("2d");
+  const GAP = 44, R = 150, PUSH = 46;
+  let W = 0, H = 0, dots = [], colour = "#00e5ff";
+  const readColour = () => { colour = getComputedStyle(root).getPropertyValue("--p-accent").trim() || colour; };
+  const layout = () => {
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    W = innerWidth; H = innerHeight;
+    cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    dots = [];
+    for (let y = GAP / 2; y < H; y += GAP) for (let x = GAP / 2; x < W; x += GAP) dots.push({ x0: x, y0: y, x, y });
   };
-  addEventListener("scroll", () => { if (!queued) { queued = true; requestAnimationFrame(move); } }, { passive: true });
-  move();
+  // pointer: eased glow position (in %) and the push centre (in px); off when the finger lifts
+  let tx = 50, ty = 50, gx = 50, gy = 50, px = -1e4, py = -1e4, on = false;
+  const point = (e) => { tx = (e.clientX / W) * 100; ty = (e.clientY / H) * 100; px = e.clientX; py = e.clientY; on = true; };
+  addEventListener("pointermove", point, { passive: true });
+  // each click or tap sends out a ring that spreads over ~1 s and nudges the dots as it passes
+  let rings = [];
+  const RING_T = 60, RING_R = 260;
+  addEventListener("pointerdown", (e) => { point(e); if (!still) rings.push({ x: e.clientX, y: e.clientY, t: 0 }); }, { passive: true });
+  const off = (e) => { if (e.pointerType !== "mouse") { on = false; tx = 50; ty = 50; } };
+  addEventListener("pointerup", off); addEventListener("pointercancel", off);
+  document.addEventListener("mouseleave", () => { on = false; });
+
+  const draw = () => {
+    ctx.clearRect(0, 0, W, H);
+    for (const r of rings) {
+      r.t++; r.rad = 12 + (r.t / RING_T) * RING_R;
+      ctx.strokeStyle = colour; ctx.lineWidth = 2; ctx.globalAlpha = 0.5 * (1 - r.t / RING_T);
+      ctx.beginPath(); ctx.arc(r.x, r.y, r.rad, 0, Math.PI * 2); ctx.stroke();
+    }
+    rings = rings.filter((r) => r.t < RING_T);
+    ctx.fillStyle = colour;
+    for (const d of dots) {
+      let txp = d.x0, typ = d.y0, near = 0;
+      if (on) {
+        const dx = d.x0 - px, dy = d.y0 - py, dist = Math.hypot(dx, dy) || 1;
+        if (dist < R) { near = 1 - dist / R; const k = near * near * PUSH; txp += (dx / dist) * k; typ += (dy / dist) * k; }
+      }
+      for (const r of rings) {
+        const dx = d.x0 - r.x, dy = d.y0 - r.y, dist = Math.hypot(dx, dy) || 1;
+        const w = Math.max(0, 1 - Math.abs(dist - r.rad) / 24);
+        if (w) { txp += (dx / dist) * w * 14; typ += (dy / dist) * w * 14; near = Math.max(near, w * 0.8); }
+      }
+      d.x += (txp - d.x) * 0.12; d.y += (typ - d.y) * 0.12;
+      ctx.globalAlpha = Math.min(1, 0.13 + 0.5 * near);
+      ctx.beginPath(); ctx.arc(d.x, d.y, 1.4, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  };
+  const frame = (t) => {
+    gx += (tx - gx) * 0.08; gy += (ty - gy) * 0.08;
+    root.style.setProperty("--mx", `${gx}%`); root.style.setProperty("--my", `${gy}%`);
+    draw();
+    requestAnimationFrame(frame);
+  };
+  readColour(); layout();
+  new MutationObserver(() => { readColour(); if (still) draw(); }).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+  addEventListener("resize", () => { layout(); if (still) draw(); });
+  if (still) draw(); else requestAnimationFrame(frame);
 }
