@@ -122,6 +122,16 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 5; pointer-events
 @media (max-width: 639px) { #experience, #skills { --hm: 2; } .nav__actions .theme-toggle { display: none; } }
 #experience .rows__name::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #4ade80; margin-right: var(--s-3); vertical-align: 1px; }
 .footer__legal { align-items: center; }
+/* hero window and sensor diagram: frames sized to what they hold, centred beside the words */
+@media (min-width: 1024px) {
+  .hero--collage .hero__grid { align-items: center; }
+  .hero--collage .hero__art { height: 560px; align-self: center; }
+  .hero--collage .hero__text { align-self: center; }
+  #iot .grid { align-items: center; }
+  #iot .frame--split { aspect-ratio: auto; height: 440px; }
+}
+/* the footer's links sit just under the close instead of at the screen's foot */
+footer.closing > .wrap { grid-template-rows: auto auto; align-content: start; }
 /* the code window's frame only as tall as the code, centred beside the roles */
 @media (min-width: 1024px) { #experience .grid { align-items: center; } #experience .frame--split { aspect-ratio: auto; height: 520px; } }
 /* the phone's short hero frame keeps the log's first row whole */
