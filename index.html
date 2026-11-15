@@ -112,14 +112,14 @@
 .app__pane--open > .ui-term { min-height: 100%; }
 .app.ui { height: 400px; }
 @media (max-width: 1023px) { .app.ui { height: 520px; } }
-@media (max-width: 639px) { .app.ui { height: 340px; } }
+@media (max-width: 639px) { .app.ui { height: 300px; } }
 /* the cyan glow follows the reader down the page (site.js moves --gx/--gy with the scroll) */
 body::after { content: ""; position: fixed; inset: 0; z-index: 5; pointer-events: none; mix-blend-mode: screen;
   background: radial-gradient(38vmax circle at 50% var(--gy, 50%), rgb(0 229 255 / .13), transparent 70%); }
 :root[data-theme="light"] body::after { display: none; }
 /* the theme switch is a plain nav word, not a native button box */
 .theme-toggle { background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: pointer; min-height: 44px; }
-@media (max-width: 639px) { #experience, #skills { --hm: 2; } .nav__actions .theme-toggle { display: none; } }
+@media (max-width: 639px) { .nav__actions .theme-toggle { display: none; } }
 #experience .rows__name::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #4ade80; margin-right: var(--s-3); vertical-align: 1px; }
 .footer__legal { align-items: center; }
 /* hero window and sensor diagram: frames sized to what they hold, centred beside the words */
@@ -135,7 +135,14 @@ footer.closing > .wrap { grid-template-rows: auto auto; align-content: start; }
 /* the code window's frame only as tall as the code, centred beside the roles */
 @media (min-width: 1024px) { #experience .grid { align-items: center; } #experience .frame--split { aspect-ratio: auto; height: 520px; } }
 /* the phone's short hero frame keeps the log's first row whole */
-@media (max-width: 639px) { .ly-piece--main .d-tabs, .ly-piece--main .d-row:nth-child(n+2) { display: none; } }
+@media (max-width: 639px) {
+  .ly-piece--main .d-tabs { display: none; }
+  /* the .fill grids take their content height on a phone, so the section grows instead of overlapping */
+  main > section:is(#iot, #experience, #skills) .fill { flex: 0 0 auto; min-height: auto; height: auto; }
+  /* phone: each section one screen that grows with its content, frames sized to what they hold */
+  #iot .frame--split { aspect-ratio: auto; height: 380px; }
+  #experience .frame--split { aspect-ratio: auto; height: 460px; }
+}
 @media (max-width: 359px) { .nav .nav__name { display: none; } }
 #skills .skills-cols { margin-top: var(--s-7); }
 #skills .skills-cols p + p { margin-top: var(--s-2); }
@@ -298,7 +305,7 @@ footer.closing > .wrap { grid-template-rows: auto auto; align-content: start; }
     </div>
   </section>
 
-  <section class="section" id="iot" aria-labelledby="iot-h" style="--hm: 2">
+  <section class="section" id="iot" aria-labelledby="iot-h">
     <div class="wrap">
       <div class="grid fill">
         <div class="span-5 stack-6">
@@ -311,7 +318,7 @@ footer.closing > .wrap { grid-template-rows: auto auto; align-content: start; }
           </ul>
         </div>
         <div class="frame frame--split span-6 start-7">
-          <div class="dg" data-diagram data-dg-still><script type="application/json">{"layout": "lanes", "size": "card", "alt": "An ESP32 with a DHT22 sensor sends readings over MQTT to a Node.js server, which feeds live readings, a forecast and a message log in the browser.", "curve": "curve", "input": {"label": "ESP32", "icon": "si:espressif", "meta": "DHT22"}, "core": {"label": "Node.js server", "icon": "nodejs"}, "lanes": [{"label": "Live readings", "icon": "ui:activity", "meta": "WebSockets", "done": true}, {"label": "Forecast", "icon": "ui:cloud", "meta": "Open-Meteo", "done": true}, {"label": "Message log", "icon": "ui:list", "meta": "MQTT", "done": true}]}</script></div>
+          <div class="dg" data-diagram data-dg-phone="loop"><script type="application/json">{"layout": "lanes", "size": "card", "alt": "An ESP32 with a DHT22 sensor sends readings over MQTT to a Node.js server, which feeds live readings, a forecast and a message log in the browser.", "curve": "curve", "input": {"label": "ESP32", "icon": "si:espressif", "meta": "DHT22"}, "core": {"label": "Node.js server", "icon": "nodejs"}, "lanes": [{"label": "Live readings", "icon": "ui:activity", "meta": "WebSockets", "done": true}, {"label": "Forecast", "icon": "ui:cloud", "meta": "Open-Meteo", "done": true}, {"label": "Message log", "icon": "ui:list", "meta": "MQTT", "done": true}]}</script></div>
         </div>
       </div>
     </div>
@@ -376,7 +383,7 @@ footer.closing > .wrap { grid-template-rows: auto auto; align-content: start; }
         <div class="span-4"><p class="t-card">JavaScript and Node.js</p><p>Express servers, MQTT, WebSockets and this site.</p></div>
       </div>
       <div class="panel skills-panel">
-        <div class="dg" data-diagram><script type="application/json">{"layout": "hub", "size": "band", "alt": "The languages and tools Christos uses: C#, .NET, Python, Java, JavaScript, Node.js, MQTT and Git.", "center": {"label": "Christos"}, "spokes": [{"label": "C#", "icon": "logos:c-sharp"}, {"label": ".NET", "icon": "logos:dotnet"}, {"label": "Python", "icon": "logos:python"}, {"label": "Java", "icon": "logos:java"}, {"label": "JavaScript", "icon": "logos:javascript"}, {"label": "Node.js", "icon": "logos:nodejs-icon"}, {"label": "MQTT", "icon": "si:mqtt"}, {"label": "Git", "icon": "logos:git-icon"}]}</script></div>
+        <div class="dg" data-diagram data-dg-phone="loop"><script type="application/json">{"layout": "hub", "alt": "The languages and tools Christos uses: C#, .NET, Python, Java, JavaScript, Node.js, MQTT and Git.", "center": {"label": "Christos"}, "spokes": [{"label": "C#", "icon": "logos:c-sharp"}, {"label": ".NET", "icon": "logos:dotnet"}, {"label": "Python", "icon": "logos:python"}, {"label": "Java", "icon": "logos:java"}, {"label": "JavaScript", "icon": "logos:javascript"}, {"label": "Node.js", "icon": "logos:nodejs-icon"}, {"label": "MQTT", "icon": "si:mqtt"}, {"label": "Git", "icon": "logos:git-icon"}]}</script></div>
       </div>
     </div>
   </section>
