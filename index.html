@@ -110,6 +110,7 @@
 /* the theme switch is a plain nav word, not a native button box */
 .theme-toggle { background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: pointer; min-height: 44px; }
 @media (max-width: 639px) { #experience, #skills { --hm: 2; } .nav__actions .theme-toggle { display: none; } }
+#experience .rows__name::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #4ade80; margin-right: var(--s-3); vertical-align: 1px; }
 @media (max-width: 359px) { .nav .nav__name { display: none; } }
 #skills .skills-cols { margin-top: var(--s-7); }
 #skills .skills-cols p + p { margin-top: var(--s-2); }
@@ -292,7 +293,7 @@
     </div>
   </section>
 
-  <section class="section ground-inverse" id="experience" aria-labelledby="experience-h" data-moment="line-carries-colour" data-moment-opts='{"from": "base"}'>
+  <section class="section ground-surface" id="experience" aria-labelledby="experience-h" data-moment="line-carries-colour" data-moment-opts='{"from": "base"}'>
     <div class="wrap">
       <div class="grid fill">
         <div class="span-5 stack-6">
