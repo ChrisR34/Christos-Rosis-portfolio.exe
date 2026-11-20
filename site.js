@@ -1,6 +1,63 @@
 // Section fades: each block rises once as it comes into view.
 const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+// Entry: a noisy sensor trace settles to a calibrated 22.4 °C / 48.2 %, then the screen wipes up
+// and the hero rises. Plays once per tab (the head script decides); click or any key skips it.
+{
+  const html = document.documentElement, intro = document.querySelector(".intro");
+  if (intro && html.classList.contains("intro-play") && !html.classList.contains("intro-done")) {
+    try { sessionStorage.setItem("intro-seen", "1"); } catch {}
+    const line = intro.querySelector(".intro__line");
+    const temp = intro.querySelector("[data-intro-temp]"), hum = intro.querySelector("[data-intro-hum]");
+    const SETTLE = 1500, N = 90, seeds = Array.from({ length: N }, () => Math.random() * 2 - 1);
+    let t0 = null, over = false, hold;
+    const frame = (now) => {
+      if (over) return;
+      t0 ??= now;
+      const t = Math.min(1, (now - t0) / SETTLE), settled = 1 - (1 - t) ** 3, noise = 1 - settled;
+      line.setAttribute("points", seeds.map((seed, i) =>
+        `${((i / (N - 1)) * 1000).toFixed(1)},${(100 + noise * (seed * 70 + Math.sin(i * 0.45 + now / 90) * 25 * (Math.random() + 0.3))).toFixed(1)}`).join(" "));
+      temp.textContent = (22.4 * settled + noise * (Math.random() * 8 - 4)).toFixed(1);
+      hum.textContent = (48.2 * settled + noise * (Math.random() * 12 - 6)).toFixed(1);
+      if (t < 1) requestAnimationFrame(frame); else lock();
+    };
+    const lock = () => {
+      intro.classList.add("is-locked");
+      intro.querySelector(".intro__state").textContent = "Calibrated";
+      line.setAttribute("points", "0,100 1000,100");
+      temp.textContent = "22.4"; hum.textContent = "48.2";
+      hold = setTimeout(leave, 450);
+    };
+    const leave = () => {
+      if (over) return;
+      over = true; clearTimeout(hold); removeEventListener("keydown", leave);
+      intro.classList.add("is-leaving");
+      html.classList.add("intro-out");
+      intro.addEventListener("animationend", () => html.classList.add("intro-done"), { once: true });
+    };
+    intro.addEventListener("click", leave);
+    addEventListener("keydown", leave);
+    requestAnimationFrame(frame);
+  }
+}
+
+// Reading meter across the top, and a cyan scan line that sweeps each picture once as it arrives.
+if (!still) {
+  const meter = Object.assign(document.createElement("div"), { className: "scroll-meter" });
+  meter.setAttribute("aria-hidden", "true");
+  document.body.append(meter);
+  let queued = false;
+  const read = () => { queued = false; const max = document.documentElement.scrollHeight - innerHeight;
+    meter.style.setProperty("--read", max > 0 ? Math.min(1, scrollY / max).toFixed(4) : 0); };
+  addEventListener("scroll", () => { if (!queued) { queued = true; requestAnimationFrame(read); } }, { passive: true });
+  addEventListener("resize", read); read();
+
+  const hosts = document.querySelectorAll("main > section:not(.hero) :is(.app, .frame, .skills-panel)");
+  const seen = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("is-scanned"); seen.unobserve(e.target); } }), { threshold: 0.35 });
+  hosts.forEach((el) => { const l = document.createElement("i"); l.className = "scan-line"; l.setAttribute("aria-hidden", "true");
+    el.classList.add("scan-host"); el.append(l); seen.observe(el); });
+}
+
 if (!still) {
   // each block rises once as it comes into view
   const items = document.querySelectorAll("main > section:not(.hero):not([data-moment]) .wrap > *, .closing__cta");

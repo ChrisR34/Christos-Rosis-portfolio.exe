@@ -1,0 +1,161 @@
+/* Page CSS for index.html (kit rule: only inside visuals, plus the site's own layers). */
+/* the hero art: the page's ground with one soft cyan light */
+.hero__art { background:
+    radial-gradient(70% 60% at 18% 12%, color-mix(in oklab, var(--p-accent) 22%, var(--p-surface)), transparent 70%),
+    radial-gradient(60% 50% at 90% 100%, color-mix(in oklab, var(--p-accent) 14%, var(--p-bg)), transparent 70%),
+    var(--p-surface); }
+.hero__art > .ly-piece--note { left: var(--s-6); bottom: var(--s-6); width: 300px; z-index: 2; }
+.d-note__line { display: flex; align-items: center; gap: 10px; padding: 7px 0; font-size: 13px; color: #3d4247; border-top: 1px solid rgb(0 0 0 / .06); }
+.d-note__line:first-of-type { border-top: 0; }
+.d-note__line i { width: 18px; height: 18px; border-radius: 50%; flex: none; display: grid; place-items: center; background: #e2f6f9; color: #00606d; font-style: normal; font-size: 13px; font-weight: 500; }
+.d-note__line b { font-weight: 500; color: #16181a; }
+.hero__proof { font-size: var(--t-small); color: var(--muted); }
+.ly-piece--main .d-row { grid-template-columns: 36px minmax(0, 1fr) 72px 96px; }
+.ly-piece--main .d-main { padding-right: var(--ly-cut-room); }
+.d-row .d-thumb { display: grid; place-items: center; font: 500 12px/1 var(--font-mono); color: #00606d; background: #e2f6f9; }
+.d-win--dark .d-row .d-thumb { color: #7eeefc; background: rgb(0 229 255 / .12); }
+.d-win--dark .d-row b { color: #eceef0; }
+.d-win--dark .d-tabs span.is-on { background: rgb(255 255 255 / .08); color: #fff; }
+.d-row b { font-family: var(--font-mono); }
+@media (max-width: 639px) { .ly-piece--main .d-row { grid-template-columns: 36px minmax(0, 1fr) 96px; } }
+@media (max-width: 1023px) { .hero__art > .ly-piece--note { left: var(--s-4); bottom: var(--s-4); width: 270px; } }
+/* section fades: added by site.js only, so nothing hides without script or under reduced motion */
+.rise { opacity: 0; transform: translateY(28px); transition: opacity .9s ease, transform 1.1s cubic-bezier(.16, 1, .3, 1); transition-delay: calc(var(--i, 0) * 90ms); }
+.rise.is-in { opacity: 1; transform: none; }
+
+/* app-frame (sections-library.md, app-frame) */
+.app.ui { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); margin-top: var(--s-7); background: var(--u-bg); border: 1px solid var(--u-border); border-radius: var(--u-r); box-shadow: var(--u-shadow); }
+.app > .app__pane { position: relative; min-width: 0; min-height: 0; overflow: hidden; }
+.app > .app__pane + .app__pane { border-left: 1px solid var(--u-line); }
+.app > .app__pane > .ui-panel { width: 100%; border: 0; border-radius: 0; box-shadow: none; }
+.app > .app__pane::after { content: ""; position: absolute; inset: auto 0 0 0; height: 64px; background: linear-gradient(transparent, var(--u-bg)); pointer-events: none; }
+@media (min-width: 1024px) and (max-width: 1279px) { .app.ui { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); } }
+@media (max-width: 1023px) {
+  .app.ui { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .app > .app__pane--list { max-height: 252px; }
+  .app > .app__pane--list::after { display: none; }
+  .app .ui-win__side { display: none; }
+  .app .ui-win__body { grid-template-columns: minmax(0, 1fr); }
+  .app > .app__pane + .app__pane { border-left: 0; border-top: 1px solid var(--u-line); }
+}
+@media (max-width: 639px) {
+  .app.ui { grid-template-rows: minmax(0, 1fr); }
+  .app > .app__pane--list { display: none; }
+  .app > .app__pane + .app__pane { border-top: 0; }
+}
+.app__pane--open > .ui-term { min-height: 100%; }
+.app.ui { height: 400px; }
+@media (max-width: 1023px) { .app.ui { height: 520px; } }
+@media (max-width: 639px) { .app.ui { height: 300px; } }
+/* the cyan glow sits fixed in the middle of the screen, so it travels with the reader */
+body::after { content: ""; position: fixed; inset: 0; z-index: 5; pointer-events: none; mix-blend-mode: screen;
+  background: radial-gradient(15vmax circle at var(--mx, 50%) var(--my, 50%), rgb(0 229 255 / .11), transparent 70%); }
+/* background: the dot field site.js draws (dots pushed away from the pointer) */
+.bg-dots { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 4; pointer-events: none; }
+/* light theme: screen blending cannot show on white, so the teal accent tints instead */
+:root[data-theme="light"] body::after { mix-blend-mode: multiply;
+  background: radial-gradient(15vmax circle at var(--mx, 50%) var(--my, 50%), rgb(0 123 140 / .13), transparent 70%); }
+/* the theme switch is a plain nav word, not a native button box */
+.theme-toggle { background: none; border: 0; padding: 0; font: inherit; color: inherit; cursor: pointer; min-height: 44px; }
+@media (max-width: 639px) { .nav__actions .theme-toggle { display: none; } }
+/* compact layout at every width: sections hug their content instead of filling a whole screen (the hero stays one screen) */
+main > section.section:not(.hero), footer.footer.closing { height: auto; min-height: 0; }
+main > section.section:not(.hero) { --padt: 88px; --padb: 48px; }
+@media (max-width: 639px) { main > section.section:not(.hero) { --padt: 72px; --padb: 32px; } }
+main > section.section:not(.hero) .fill { flex: 0 0 auto; min-height: auto; height: auto; }
+/* phones: the pointer glow at 60%, matching the gentler dot effect */
+@media (max-width: 639px), (pointer: coarse) { body::after { opacity: .6; } }
+#experience .rows__name::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #4ade80; margin-right: var(--s-3); vertical-align: 1px; }
+.footer__legal { align-items: center; }
+/* hero window and sensor diagram: frames sized to what they hold, centred beside the words */
+@media (min-width: 1024px) {
+  .hero--collage .hero__grid { align-items: center; }
+  .hero--collage .hero__art { height: 560px; align-self: center; }
+  .hero--collage .hero__text { align-self: center; }
+  #iot .grid { align-items: center; }
+  #iot .frame--split { aspect-ratio: auto; height: 440px; }
+}
+/* the footer's links sit just under the close instead of at the screen's foot */
+footer.closing > .wrap { grid-template-rows: auto auto; align-content: start; }
+/* the code window's frame only as tall as the code, centred beside the roles */
+@media (min-width: 1024px) { #experience .grid { align-items: center; } #experience .frame--split { aspect-ratio: auto; height: 520px; } }
+/* the phone's short hero frame keeps the log's first row whole */
+@media (max-width: 639px) {
+  .ly-piece--main .d-tabs, .ly-piece--main .d-row .num { display: none; }
+  /* nothing cut on a phone: the hero window inside its frame, the code window the frame's width with wrapped lines */
+  .hero__art > .ly-piece--main { width: calc(100% - 2 * var(--s-4)); }
+  #experience .at-rise { --w: calc(100% - 32px) !important; }
+  #experience .ui-code__pre, #experience .ui-code__ln { white-space: pre-wrap; overflow-wrap: anywhere; }
+  #experience .ui-code__pre { font-size: 12px; }
+  #experience .ui-code__tab + .ui-code__tab { display: none; }
+  /* the .fill grids take their content height on a phone, so the section grows instead of overlapping */
+  main > section:is(#iot, #experience, #skills) .fill { flex: 0 0 auto; min-height: auto; height: auto; }
+  /* phone: each section one screen that grows with its content, frames sized to what they hold */
+  #iot .frame--split { aspect-ratio: auto; height: 380px; }
+  #experience .frame--split { aspect-ratio: auto; height: 460px; }
+}
+@media (max-width: 359px) { .nav .nav__name { display: none; } }
+#skills .skills-cols { margin-top: var(--s-7); }
+#skills .skills-cols p + p { margin-top: var(--s-2); }
+#skills .skills-panel { --p-h: 380px; margin-top: var(--s-7); background: var(--p-surface); border: 1px solid var(--line); }
+@media (max-width: 639px) { #skills .skills-panel { --p-h: 300px; margin-top: var(--s-6); } }
+
+/* ---------- more cyan ---------- */
+.h1-accent { color: var(--p-accent); text-shadow: 0 0 28px color-mix(in oklab, var(--p-accent) 45%, transparent); }
+:root[data-theme="light"] .h1-accent { text-shadow: none; }
+/* a short cyan tick under each section heading, drawn when the heading arrives */
+main > section.section h2::after { content: ""; display: block; width: 48px; height: 2px; margin-top: var(--s-4); background: var(--p-accent);
+  box-shadow: 0 0 12px var(--p-accent); transform-origin: left; transition: transform 1s cubic-bezier(.16, 1, .3, 1) .25s; }
+.mo-js main > section.section .rise:not(.is-in) h2::after { transform: scaleX(0); }
+
+/* ---------- scroll ---------- */
+/* reading meter: a cyan line across the top that fills as you scroll (site.js sets --read) */
+.scroll-meter { position: fixed; inset: 0 0 auto 0; height: 2px; z-index: 60; pointer-events: none; transform-origin: left;
+  transform: scaleX(var(--read, 0)); background: linear-gradient(90deg, #0aa5bf, var(--p-accent), #8af4ff); box-shadow: 0 0 10px var(--p-accent); }
+/* scan: a cyan line sweeps once down each picture as it comes into view, like an instrument reading it */
+.scan-host { position: relative; }
+.scan-line { position: absolute; left: 0; right: 0; top: 0; height: 1px; z-index: 3; pointer-events: none; opacity: 0;
+  background: linear-gradient(90deg, transparent, #8af4ff, transparent); box-shadow: 0 0 14px 1px var(--p-accent); }
+.scan-host.is-scanned > .scan-line { animation: site-scan 1.3s cubic-bezier(.45, 0, .2, 1) .2s; }
+@keyframes site-scan { 0% { top: 0; opacity: 0; } 12% { opacity: 1; } 88% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+
+/* ---------- entry: calibration sequence ---------- */
+.intro { display: none; }
+.intro-play:not(.intro-done) .intro {
+  position: fixed; inset: 0; z-index: 100; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr auto auto;
+  padding: max(24px, 4vh) max(24px, calc((100vw - 1240px) / 2)); cursor: pointer;
+  background:
+    linear-gradient(color-mix(in oklab, var(--p-accent) 6%, transparent) 1px, transparent 1px) 0 0 / 44px 44px,
+    linear-gradient(90deg, color-mix(in oklab, var(--p-accent) 6%, transparent) 1px, transparent 1px) 0 0 / 44px 44px,
+    var(--p-bg);
+  font-family: var(--font-mono); color: var(--p-muted);
+}
+.intro.is-leaving { animation: intro-leave .8s cubic-bezier(.7, 0, .2, 1) forwards; }
+@keyframes intro-leave { to { clip-path: inset(0 0 100% 0); } }
+.intro__top { display: flex; justify-content: space-between; gap: 16px; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; }
+.intro__state { color: var(--p-accent); }
+.intro.is-locked .intro__state::before { content: "✓ "; }
+.intro__trace { align-self: center; width: 100%; height: 34vh; overflow: visible; }
+.intro__axis { stroke: color-mix(in oklab, var(--p-accent) 20%, transparent); stroke-dasharray: 4 6; vector-effect: non-scaling-stroke; }
+.intro__line { fill: none; stroke: var(--p-accent); stroke-width: 2; vector-effect: non-scaling-stroke; filter: drop-shadow(0 0 6px var(--p-accent)); }
+.intro__readout { display: flex; gap: clamp(32px, 6vw, 72px); }
+.intro__readout span { display: block; margin-bottom: 6px; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; }
+.intro__readout strong { font-size: clamp(44px, 8vw, 88px); font-weight: 400; line-height: 1; color: var(--p-ink); font-variant-numeric: tabular-nums; }
+.intro__readout small { margin-left: 6px; font-size: 16px; color: var(--p-accent); }
+.intro.is-locked .intro__readout strong { color: var(--p-accent); text-shadow: 0 0 24px color-mix(in oklab, var(--p-accent) 50%, transparent); }
+.intro__skip { margin-top: 20px; font-size: 11px; letter-spacing: .12em; opacity: .6; }
+/* the hero waits under the intro, then rises as it wipes away */
+.intro-play:not(.intro-out, .intro-done) .hero :is(.hero__text > *, .hero__art) { opacity: 0; }
+.intro-out .hero .hero__text > * { animation: site-rise .8s cubic-bezier(.16, 1, .3, 1) backwards; }
+.intro-out .hero .hero__text > :nth-child(1) { animation-delay: .15s; }
+.intro-out .hero .hero__text > :nth-child(2) { animation-delay: .25s; }
+.intro-out .hero .hero__text > :nth-child(3) { animation-delay: .35s; }
+.intro-out .hero .hero__text > :nth-child(4) { animation-delay: .45s; }
+.intro-out .hero .hero__art { animation: site-dock 1s cubic-bezier(.16, 1, .3, 1) .3s backwards; }
+@keyframes site-rise { from { opacity: 0; transform: translateY(24px); } }
+@keyframes site-dock { from { opacity: 0; transform: translateY(32px) scale(.98); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-meter, .scan-line { display: none; }
+  main > section.section h2::after { transition: none; transform: none !important; }
+}
