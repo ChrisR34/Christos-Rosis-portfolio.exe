@@ -119,42 +119,33 @@
 </header>
 
 <main id="top">
-  <section class="hero hero--collage" data-enter aria-labelledby="hero-h">
-    <div class="wrap"><div class="hero-text grid hero__grid">
-      <div class="hero__text span-5">
-        <h1 id="hero-h">Software developer for <span class="h1-accent">C# and IoT</span></h1>
-        <p class="hero__lead">I’m Christos Rosis. I write C# servers that talk to lab instruments, the clients that test them, and sensor dashboards on the ESP32.</p>
-        <div class="btn-row"><a class="btn btn--primary" href="Christos Rosis CV.pdf" download>Download CV<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a><a class="btn btn--secondary" href="#projects">See the projects</a></div>
-        <p class="hero__proof">BSc Computer Science at Kingston University, London.</p>
-      </div>
-      <div class="hero__art span-6 start-7" role="img" aria-label="The TCP server's command log answering temperature and humidity requests on three ports, and a test client run that passed">
-        <div class="ly-piece ly-piece--main d-win d-win--dark" aria-hidden="true">
-          <div class="d-win__bar"><span class="d-win__dots"><i></i><i></i><i></i></span><span>TcpApiServer · instrument bench</span></div>
-          <div class="d-win__body">
-            <div class="d-side">
-              <span class="is-on"><i></i>Command log</span><span><i></i>Delegates</span><span><i></i>Clients</span><span><i></i>Errors</span>
-              <span class="d-side__label">Ports</span><span><i></i>5000</span><span><i></i>5001</span><span><i></i>5002</span>
-            </div>
-            <div class="d-main">
-              <div class="d-main__head"><h4>Command log</h4><span class="d-btn">Listening</span></div>
-              <div class="d-tabs"><span class="is-on">All</span><span>Port 5000</span><span>Errors</span></div>
-              <div class="d-rows">
-                <div class="d-row"><span class="d-thumb">&gt;_</span><div><b>READ:TEMP</b><small>Port 5000 · bench client</small></div><span class="num">21.6 °C</span><span class="d-chip">Replied</span></div>
-                <div class="d-row"><span class="d-thumb">&gt;_</span><div><b>READ:HUM</b><small>Port 5000 · bench client</small></div><span class="num">48.2 %</span><span class="d-chip">Replied</span></div>
-                <div class="d-row"><span class="d-thumb">&gt;_</span><div><b>SET:RH 50</b><small>Port 5001 · generator</small></div><span class="num">OK</span><span class="d-chip">Replied</span></div>
-                <div class="d-row"><span class="d-thumb">&gt;_</span><div><b>PING</b><small>Port 5002 · test client</small></div><span class="num">PONG</span><span class="d-chip">Replied</span></div>
-                <div class="d-row"><span class="d-thumb">&gt;_</span><div><b>READ:DEWPT</b><small>Port 5000 · bench client</small></div><span class="num">10.1 °C</span><span class="d-chip">Replied</span></div>
-                <div class="d-row"><span class="d-thumb">&gt;_</span><div><b>STATUS</b><small>Port 5001 · generator</small></div><span class="num">READY</span><span class="d-chip">Replied</span></div>
-              </div>
-            </div>
-          </div>
+  <section class="hero hero--screen" data-enter aria-labelledby="hero-h">
+    <div class="wrap"><div class="hero-text">
+      <div class="screen">
+        <!-- a neural network of glowing particles (site.js) -->
+        <canvas class="screen__fx" aria-hidden="true"></canvas>
+        <div class="screen__text">
+          <h1 id="hero-h">Software developer for <span class="h1-accent">C# and IoT</span></h1>
+          <p class="hero__lead">I’m Christos Rosis. I write C# servers that talk to lab instruments, the clients that test them, and sensor dashboards on the ESP32.</p>
+          <div class="btn-row"><a class="btn btn--primary" href="Christos Rosis CV.pdf" download>Download CV<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a><a class="btn btn--secondary" href="#projects">See the projects</a></div>
+          <p class="hero__proof">BSc Computer Science at Kingston University, London.</p>
         </div>
-        <div class="ly-piece ly-piece--note d-card" aria-hidden="true" data-ly-steps="700">
-          <div class="d-card__row"><h5>Test client run</h5><span class="d-chip" data-step data-step-at="4">Passed</span></div>
-          <div class="d-note__line" data-step><i>✓</i><span><b>Inputs generated</b> for every delegate</span></div>
-          <div class="d-note__line" data-step><i>✓</i><span>Sent on <b>ports 5000 to 5002</b></span></div>
-          <div class="d-note__line" data-step><i>✓</i><span>Every reply <b>validated</b></span></div>
+        <div class="screen__net" role="img" aria-label="An animated neural network: signals fire from the input layer through two hidden layers to the output"></div>
+        <div class="screen__ruler" aria-hidden="true">
+          <span class="screen__pill">listening on :5000</span>
         </div>
+        <!-- the projects on a wheel like a phone's alarm picker: scroll, drag or use the arrow keys; the centre item opens -->
+        <nav class="picker" aria-label="Projects">
+          <div class="picker__band" aria-hidden="true"></div>
+          <ul class="picker__list">
+            <li><a class="picker__item" href="#projects"><b>TCP API server</b><small>C# · delegates · 3 ports</small><i class="picker__go" aria-hidden="true">→</i></a></li>
+            <li><a class="picker__item" href="#projects"><b>Automated test client</b><small>C# · 39 replies validated</small><i class="picker__go" aria-hidden="true">→</i></a></li>
+            <li><a class="picker__item" href="#iot"><b>Sensor dashboard</b><small>ESP32 → MQTT → WebSockets</small><i class="picker__go" aria-hidden="true">→</i></a></li>
+            <li><a class="picker__item" href="#experience"><b>Experience</b><small>VCT · Kingston University</small><i class="picker__go" aria-hidden="true">→</i></a></li>
+            <li><a class="picker__item" href="#skills"><b>Languages &amp; tools</b><small>C# · Python · Java · JavaScript</small><i class="picker__go" aria-hidden="true">→</i></a></li>
+            <li><a class="picker__item" href="https://github.com/ChrisR34/Christos-Rosis-portfolio.exe"><b>This website</b><small>HTML · CSS · JavaScript</small><i class="picker__go" aria-hidden="true">↗</i></a></li>
+          </ul>
+        </nav>
       </div>
     </div></div>
   </section>

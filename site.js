@@ -137,3 +137,167 @@ if (!still) {
   addEventListener("resize", () => { layout(); if (still) draw(); });
   if (still) draw(); else requestAnimationFrame(frame);
 }
+
+// Hero screen: a neural network of glowing particles. Signals fire from the inputs through two hidden
+// layers to the outputs, which flare as they arrive. Pauses off screen and in a hidden tab; reduced
+// motion draws one still frame.
+{
+  const screen = document.querySelector(".screen"), cv = screen?.querySelector(".screen__fx"), box = screen?.querySelector(".screen__net");
+  if (cv && box) {
+    const ctx = cv.getContext("2d");
+    const small = matchMedia("(max-width: 639px), (pointer: coarse)").matches, K = small ? 0.55 : 1;
+    // a soft round sprite per colour, drawn with additive blending for the glow
+    const sprite = (core, edge) => {
+      const c = document.createElement("canvas"); c.width = c.height = 64;
+      const g = c.getContext("2d"), r = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+      r.addColorStop(0, core); r.addColorStop(0.25, edge); r.addColorStop(1, "rgba(0,0,0,0)");
+      g.fillStyle = r; g.fillRect(0, 0, 64, 64); return c;
+    };
+    const CYAN = sprite("rgba(230,255,255,1)", "rgba(0,229,255,.55)"), ICE = sprite("rgba(255,255,255,.9)", "rgba(138,244,255,.35)");
+    const rnd = (a, b) => a + Math.random() * (b - a), gauss = () => (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;
+
+    // the network: layer sizes, nodes (each a small swarm of particles), and weighted edges between layers
+    const SIZES = small ? [3, 5, 5, 2] : [4, 6, 6, 3];
+    const layers = SIZES.map((n) => Array.from({ length: n }, () => ({ x: 0, y: 0, act: 0,
+      swarm: Array.from({ length: Math.round(14 * K) }, () => ({ a: rnd(0, 6.28), r: rnd(5, 15), sp: rnd(-1.2, 1.2), s: rnd(0.8, 2) })) })));
+    const edges = [];
+    layers.forEach((layer, l) => { if (l < layers.length - 1) layer.forEach((from) => layers[l + 1].forEach((to) => edges.push({ from, to, w: Math.random() }))); });
+    const signals = [];
+    // fire: a signal leaves a node along its two or three strongest outgoing edges
+    const fire = (node, l) => {
+      node.act = 1;
+      if (l === layers.length - 1) return;
+      edges.filter((e) => e.from === node).sort((a, b) => b.w - a.w + rnd(-0.4, 0.4)).slice(0, small ? 2 : 3)
+        .forEach((e) => signals.push({ e, l: l + 1, t: 0, v: rnd(0.012, 0.02) }));
+    };
+
+    const dust = Array.from({ length: Math.round(34 * K) }, () => ({ x: Math.random(), y: Math.random(), s: rnd(6, 28), a: rnd(0.04, 0.16), vx: rnd(-0.004, 0.004), vy: rnd(-0.006, -0.001) }));
+    let W = 0, H = 0;
+    const size = () => {
+      const dpr = Math.min(devicePixelRatio || 1, 2), b = screen.getBoundingClientRect(), r = box.getBoundingClientRect();
+      W = b.width; H = b.height; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const left = r.left - b.left, top = r.top - b.top, padX = Math.min(40, r.width * 0.1);
+      const gap = Math.min(52, (r.height * 0.86) / (Math.max(...SIZES) - 1));
+      layers.forEach((layer, l) => layer.forEach((n, i) => {
+        n.x = left + padX + (l / (layers.length - 1)) * (r.width - 2 * padX);
+        n.y = top + r.height / 2 + (i - (layer.length - 1) / 2) * gap;
+      }));
+    };
+    const dot = (img, x, y, s, a) => { ctx.globalAlpha = a; ctx.drawImage(img, x - s * 2, y - s * 2, s * 4, s * 4); };
+    let last = 0, nextFire = 0;
+    const draw = (time) => {
+      const dt = Math.min(0.05, time - last || 0.016); last = time;
+      if (!still && time > nextFire) { nextFire = time + rnd(0.35, 0.8); fire(layers[0][Math.floor(Math.random() * layers[0].length)], 0); }
+      ctx.clearRect(0, 0, W, H);
+      ctx.globalCompositeOperation = "lighter";
+      for (const d of dust) { d.x = (d.x + d.vx * dt + 1) % 1; d.y = (d.y + d.vy * dt + 1) % 1; dot(ICE, d.x * W, d.y * H, d.s, d.a); }
+      // edges: faint lines, brighter while a signal runs along them
+      ctx.globalCompositeOperation = "source-over"; ctx.lineWidth = 1;
+      for (const e of edges) {
+        ctx.globalAlpha = 0.05 + 0.1 * e.w + 0.35 * Math.max(e.from.act, e.to.act) * e.w;
+        ctx.strokeStyle = "#00e5ff"; ctx.beginPath(); ctx.moveTo(e.from.x, e.from.y); ctx.lineTo(e.to.x, e.to.y); ctx.stroke();
+      }
+      ctx.globalCompositeOperation = "lighter";
+      for (let i = signals.length - 1; i >= 0; i--) {
+        const s = signals[i]; s.t += s.v * dt * 60;
+        if (s.t >= 1) { signals.splice(i, 1); if (s.e.to.act < 0.6) fire(s.e.to, s.l); else s.e.to.act = 1; continue; }
+        for (let k = 0; k < 4; k++) {   // a bright head with a short fading tail
+          const t = Math.max(0, s.t - k * 0.035);
+          dot(k ? ICE : CYAN, s.e.from.x + (s.e.to.x - s.e.from.x) * t, s.e.from.y + (s.e.to.y - s.e.from.y) * t, 3.4 - k * 0.7, 0.9 - k * 0.2);
+        }
+      }
+      // nodes: a core that flares when it fires, inside a slowly orbiting swarm of particles
+      for (const layer of layers) for (const n of layer) {
+        n.act *= Math.pow(0.12, dt);
+        dot(CYAN, n.x, n.y, 4 + n.act * 9, 0.35 + 0.6 * n.act);
+        for (const p of n.swarm) {
+          const a = p.a + time * p.sp, r = p.r * (1 + n.act * 0.5);
+          dot(ICE, n.x + Math.cos(a) * r, n.y + Math.sin(a) * r * 0.85, p.s, 0.25 + 0.5 * n.act);
+        }
+      }
+      ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over";
+    };
+    let on = true, raf = 0;
+    const loop = (ms) => { draw(ms / 1000); raf = on ? requestAnimationFrame(loop) : 0; };
+    const run = (go) => { on = go; if (go && !raf) raf = requestAnimationFrame(loop); };
+    size();
+    new ResizeObserver(() => { size(); if (still) draw(2); }).observe(screen);
+    if (still) { layers.forEach((l) => l.forEach((n) => (n.act = Math.random() * 0.6))); draw(2); }
+    else {
+      let seen = true;
+      new IntersectionObserver(([e]) => { seen = e.isIntersecting; run(seen && !document.hidden); }).observe(screen);
+      document.addEventListener("visibilitychange", () => run(seen && !document.hidden));
+    }
+  }
+}
+
+// Projects wheel, like a phone's alarm picker: native scroll with snapping does the moving; each row is
+// tilted by its distance from the centre so the list reads as a drum, and the list loops (a copy of the
+// rows sits above and below; when the wheel settles in a copy it jumps silently to the same row in the
+// middle set). Tapping a row rolls it to the centre; tapping the centred row opens it. Up/down arrows
+// move one row. It spins in once on load, like alarm digits rolling into place.
+{
+  const list = document.querySelector(".picker__list");
+  if (list) {
+    const originals = [...list.children], N = originals.length;
+    const copy = () => originals.map((li) => { const c = li.cloneNode(true); c.setAttribute("aria-hidden", "true"); c.querySelector("a").tabIndex = -1; return c; });
+    list.prepend(...copy()); list.append(...copy());
+    const rows = [...list.querySelectorAll(".picker__item")];   // 3N rows; the real ones are N .. 2N-1
+    const rowH = () => rows[0].parentElement.offsetHeight;
+    const topFor = (i) => i * rowH();   // the list's padding centres row i at scrollTop = i * row height
+    let current = -1, queued = false, spinning = false, settle;
+    const paint = () => {
+      queued = false;
+      const mid = list.scrollTop / rowH();
+      rows.forEach((row, i) => {
+        const d = i - mid, ad = Math.min(Math.abs(d), 3);
+        if (Math.abs(d) > 4) { row.style.opacity = "0"; return; }
+        row.style.transform = `perspective(700px) rotateX(${Math.max(-75, Math.min(75, -d * 24))}deg) scale(${1 - ad * 0.06})`;
+        row.style.opacity = String(Math.max(0, 1 - ad * 0.32));
+      });
+      const now = Math.round(mid);
+      if (now !== current) { rows[current]?.classList.remove("is-on"); rows[now]?.classList.add("is-on"); current = now; }
+    };
+    const queue = () => { if (!queued) { queued = true; requestAnimationFrame(paint); } };
+    // once the wheel rests in a copy, jump to the same row in the middle set (same picture, so unseen)
+    const recentre = () => {
+      if (spinning) return;
+      const i = Math.round(list.scrollTop / rowH());
+      if (i < N || i >= 2 * N) { list.scrollTop = topFor(N + (((i % N) + N) % N)); paint(); }
+    };
+    list.addEventListener("scroll", () => { queue(); clearTimeout(settle); settle = setTimeout(recentre, 160); }, { passive: true });
+    addEventListener("resize", () => { list.scrollTop = topFor(N + (((current % N) + N) % N)); queue(); });
+    const go = (i) => list.scrollTo({ top: topFor(i), behavior: still ? "auto" : "smooth" });
+    rows.forEach((row, i) => {
+      row.addEventListener("click", (e) => { if (i !== current) { e.preventDefault(); go(i); } });
+      row.addEventListener("focus", () => { if (i !== current) go(i); });
+      row.addEventListener("keydown", (e) => {
+        const step = e.key === "ArrowDown" ? 1 : e.key === "ArrowUp" ? -1 : 0;
+        if (!step) return;
+        e.preventDefault();
+        const next = current + step;   // roll one row, then hand focus to the real row it shows
+        go(next);
+        rows[N + (((next % N) + N) % N)].focus({ preventScroll: true });
+      });
+    });
+    list.scrollTop = topFor(N); paint();
+    // the spin-in: roll down through the copies and settle on the first project with an ease-out
+    if (!still) {
+      const spin = () => {
+        spinning = true;
+        const from = topFor(0), to = topFor(N), t0 = performance.now(), T = 1700;
+        list.style.scrollSnapType = "none"; list.scrollTop = from;
+        const step = (now) => {
+          const k = Math.min(1, (now - t0) / T), e = 1 - Math.pow(1 - k, 4);
+          list.scrollTop = from + (to - from) * e;
+          if (k < 1) requestAnimationFrame(step); else { list.style.scrollSnapType = ""; spinning = false; }
+        };
+        requestAnimationFrame(step);
+      };
+      const html = document.documentElement;
+      if (html.classList.contains("intro-play") && !html.classList.contains("intro-done")) {
+        new MutationObserver((m, o) => { if (html.classList.contains("intro-out") || html.classList.contains("intro-done")) { o.disconnect(); setTimeout(spin, 350); } }).observe(html, { attributes: true, attributeFilter: ["class"] });
+      } else spin();
+    }
+  }
+}
