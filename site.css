@@ -54,7 +54,10 @@ main > section.section:not(.hero) .fill { flex: 0 0 auto; min-height: auto; heig
   #iot .frame--split { aspect-ratio: auto; height: 440px; }
 }
 /* the footer's links sit just under the close instead of at the screen's foot */
-footer.closing > .wrap { grid-template-rows: auto auto; align-content: start; }
+footer.closing > .wrap { grid-template-rows: auto auto; align-content: start; padding: clamp(24px, 3.2vw, 48px); }
+@media (max-width: 639px) { footer.closing > .wrap { border-radius: 24px; padding: 22px; } }
+/* light theme: the footer's ground is the page's, so only the dark panel stands out, like the hero screen */
+:root[data-theme="light"] footer.closing { background: var(--p-bg); }
 /* the code window's frame only as tall as the code, centred beside the roles */
 @media (min-width: 1024px) { #experience .grid { align-items: center; } #experience .frame--split { aspect-ratio: auto; height: 520px; } }
 @media (max-width: 639px) {
@@ -145,6 +148,10 @@ main > .hero--screen { --hgap: 12px; --hpadb: 16px; }
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr) minmax(260px, 320px);
   grid-template-rows: minmax(0, 1fr) auto;
   grid-template-areas: "text net cards" "ruler ruler cards";
+}
+/* the footer panel shares the screen's glass, edges and corner light (no sphere) */
+.screen, footer.closing > .wrap {
+  position: relative; isolation: isolate; overflow: hidden;
   border-radius: clamp(24px, 3vw, 40px); border: 1px solid color-mix(in oklab, var(--p-accent) 18%, transparent);
   color: #e3f4f7;
   /* the screen stays a dark instrument in both themes; light leaks in from the corners */

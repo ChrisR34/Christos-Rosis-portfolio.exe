@@ -57,7 +57,7 @@ if (!still) {
   addEventListener("scroll", () => { if (!queued) { queued = true; requestAnimationFrame(read); } }, { passive: true });
   addEventListener("resize", read); read();
 
-  const hosts = document.querySelectorAll("main > section:not(.hero) :is(.app, .frame, .skills-panel)");
+  const hosts = document.querySelectorAll("main > section:not(.hero) :is(.app, .frame, .skills-panel), footer.closing > .wrap");
   const seen = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("is-scanned"); seen.unobserve(e.target); } }), { threshold: 0.35 });
   hosts.forEach((el) => { const l = document.createElement("i"); l.className = "scan-line"; l.setAttribute("aria-hidden", "true");
     el.classList.add("scan-host"); el.append(l); seen.observe(el); });
