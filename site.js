@@ -100,7 +100,9 @@ if (!still) {
   // each click or tap sends out a ring that spreads over ~1 s and nudges the dots as it passes
   let rings = [];
   const RING_T = 60, RING_R = 260;
-  addEventListener("pointerdown", (e) => { point(e); if (!still) rings.push({ x: e.clientX, y: e.clientY, t: 0 }); }, { passive: true });
+  // the click ripple is for mouse screens only: phones and tablets get no ring on tap
+  const tablet = matchMedia("(max-width: 1023px), (pointer: coarse)");
+  addEventListener("pointerdown", (e) => { point(e); if (!still && !tablet.matches) rings.push({ x: e.clientX, y: e.clientY, t: 0 }); }, { passive: true });
   const off = (e) => { if (e.pointerType !== "mouse") { on = false; tx = 50; ty = 50; } };
   addEventListener("pointerup", off); addEventListener("pointercancel", off);
   document.addEventListener("mouseleave", () => { on = false; });
