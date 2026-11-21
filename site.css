@@ -95,6 +95,8 @@ main > section.section h2::after { content: ""; display: block; width: 48px; hei
 
 /* ---------- entry: calibration sequence ---------- */
 .intro { display: none; }
+/* while the intro plays nothing scrolls underneath it, so the hero is there when it wipes away */
+html.intro-play:not(.intro-out, .intro-done), html.intro-play:not(.intro-out, .intro-done) body { overflow: hidden; }
 .intro-play:not(.intro-done) .intro {
   position: fixed; inset: 0; z-index: 100; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr auto auto;
   padding: max(24px, 4vh) max(24px, calc((100vw - 1240px) / 2)); cursor: pointer;

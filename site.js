@@ -7,6 +7,8 @@ const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const html = document.documentElement, intro = document.querySelector(".intro");
   if (intro && html.classList.contains("intro-play") && !html.classList.contains("intro-done")) {
     try { sessionStorage.setItem("intro-seen", "1"); } catch {}
+    // the page must not move under the intro: start at the top (site.css also locks scrolling while it plays)
+    scrollTo(0, 0);
     const line = intro.querySelector(".intro__line");
     const temp = intro.querySelector("[data-intro-temp]"), hum = intro.querySelector("[data-intro-hum]");
     const SETTLE = 1500, N = 90, seeds = Array.from({ length: N }, () => Math.random() * 2 - 1);
@@ -30,13 +32,16 @@ const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
     };
     const leave = () => {
       if (over) return;
-      over = true; clearTimeout(hold); removeEventListener("keydown", leave);
+      over = true; clearTimeout(hold); removeEventListener("keydown", skipKey);
+      scrollTo(0, 0);
       intro.classList.add("is-leaving");
       html.classList.add("intro-out");
       intro.addEventListener("animationend", () => html.classList.add("intro-done"), { once: true });
     };
+    // a skip key must not also scroll the page (Space, arrows and Page Down would)
+    const skipKey = (e) => { if (/^( |Spacebar|Arrow\w+|Page\w+|Home|End)$/.test(e.key)) e.preventDefault(); leave(); };
     intro.addEventListener("click", leave);
-    addEventListener("keydown", leave);
+    addEventListener("keydown", skipKey);
     requestAnimationFrame(frame);
   }
 }
