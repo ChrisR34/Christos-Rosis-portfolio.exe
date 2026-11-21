@@ -87,7 +87,7 @@
      palette: the client's own (start.mjs brand), dark and light, kept by request; violet second accent dropped (kit rule)
      moments: line-carries-colour on #experience (the dark-band section) -->
 
-<header class="nav nav--centre">
+<header class="nav nav--centre is-floating">
   <div class="wrap nav__bar">
     <a class="skip-link" href="#top">Skip to content</a>
     <a class="nav__logo" href="#top" aria-label="Christos Rosis, back to top"><img src="New logo.png" alt="" width="28" height="28"><span class="nav__name">Christos Rosis</span></a>
@@ -132,11 +132,15 @@
         </div>
         <div class="screen__net" role="img" aria-label="An animated neural network: signals fire from the input layer through two hidden layers to the output"></div>
         <div class="screen__ruler" aria-hidden="true">
-          <span class="screen__pill">listening on :5000</span>
+          <span class="screen__pill"><i class="screen__live" aria-hidden="true"></i>London <span class="screen__sep" aria-hidden="true">·</span> Available now</span>
         </div>
-        <!-- the projects on a wheel like a phone's alarm picker: scroll, drag or use the arrow keys; the centre item opens -->
+        <!-- the projects on a wheel like a phone's alarm picker: rest the pointer on it (or click, tab, touch) to engage, then scroll; the centre item opens -->
         <nav class="picker" aria-label="Projects">
           <div class="picker__band" aria-hidden="true"></div>
+          <div class="picker__arm" aria-hidden="true"></div>
+          <div class="picker__hud" aria-hidden="true"><span>Projects</span><span class="picker__count"><b>01</b> / 06</span></div>
+          <div class="picker__rail" aria-hidden="true"></div>
+          <p class="picker__hint" aria-hidden="true">Hover to browse</p>
           <ul class="picker__list">
             <li><a class="picker__item" href="#projects"><b>TCP API server</b><small>C# · delegates · 3 ports</small><i class="picker__go" aria-hidden="true">→</i></a></li>
             <li><a class="picker__item" href="#projects"><b>Automated test client</b><small>C# · 39 replies validated</small><i class="picker__go" aria-hidden="true">→</i></a></li>

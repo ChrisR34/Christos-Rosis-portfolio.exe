@@ -143,15 +143,35 @@ if (!still) {
   if (still) draw(); else requestAnimationFrame(frame);
 }
 
-// Hero screen: a neural network of glowing particles. Signals fire from the inputs through two hidden
-// layers to the outputs, which flare as they arrive. Pauses off screen and in a hidden tab; reduced
-// motion draws one still frame.
+// The top bar (a floating rounded glass bar, set in the markup) moves with the reader: scrolling down it
+// slides smoothly out of view, and the slightest scroll up brings it gliding back.
+{
+  const nav = document.querySelector(".nav");
+  if (nav) {
+    let lastY = scrollY, queued = false, travel = 0;
+    const update = () => {
+      queued = false;
+      const y = scrollY, dy = y - lastY; lastY = y;
+      const open = nav.querySelector(".nav__toggle[aria-expanded='true']") || nav.matches(":focus-within, :hover");
+      // a little travel in one direction before it reacts, so small jitters do not flicker it
+      travel = Math.sign(dy) === Math.sign(travel) ? travel + dy : dy;
+      if (y < 80 || open) nav.classList.remove("is-tucked");
+      else if (travel > 24) nav.classList.add("is-tucked");
+      else if (travel < -8) nav.classList.remove("is-tucked");
+    };
+    addEventListener("scroll", () => { if (!queued) { queued = true; requestAnimationFrame(update); } }, { passive: true });
+    update();
+  }
+}
+
+// Hero screen: a neural sphere. Nodes spread evenly over a slowly turning globe, each linked to its
+// nearest neighbours; the far side dims and shrinks, and signals hop node to node across it. Pauses off
+// screen and in a hidden tab; reduced motion draws one still frame.
 {
   const screen = document.querySelector(".screen"), cv = screen?.querySelector(".screen__fx"), box = screen?.querySelector(".screen__net");
   if (cv && box) {
     const ctx = cv.getContext("2d");
     const small = matchMedia("(max-width: 639px), (pointer: coarse)").matches, K = small ? 0.55 : 1;
-    // a soft round sprite per colour, drawn with additive blending for the glow
     const sprite = (core, edge) => {
       const c = document.createElement("canvas"); c.width = c.height = 64;
       const g = c.getContext("2d"), r = g.createRadialGradient(32, 32, 0, 32, 32, 32);
@@ -159,75 +179,76 @@ if (!still) {
       g.fillStyle = r; g.fillRect(0, 0, 64, 64); return c;
     };
     const CYAN = sprite("rgba(230,255,255,1)", "rgba(0,229,255,.55)"), ICE = sprite("rgba(255,255,255,.9)", "rgba(138,244,255,.35)");
-    const rnd = (a, b) => a + Math.random() * (b - a), gauss = () => (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;
-
-    // the network: layer sizes, nodes (each a small swarm of particles), and weighted edges between layers
-    const SIZES = small ? [3, 5, 5, 2] : [4, 6, 6, 3];
-    const layers = SIZES.map((n) => Array.from({ length: n }, () => ({ x: 0, y: 0, act: 0,
-      swarm: Array.from({ length: Math.round(14 * K) }, () => ({ a: rnd(0, 6.28), r: rnd(5, 15), sp: rnd(-1.2, 1.2), s: rnd(0.8, 2) })) })));
-    const edges = [];
-    layers.forEach((layer, l) => { if (l < layers.length - 1) layer.forEach((from) => layers[l + 1].forEach((to) => edges.push({ from, to, w: Math.random() }))); });
-    const signals = [];
-    // fire: a signal leaves a node along its two or three strongest outgoing edges
-    const fire = (node, l) => {
-      node.act = 1;
-      if (l === layers.length - 1) return;
-      edges.filter((e) => e.from === node).sort((a, b) => b.w - a.w + rnd(-0.4, 0.4)).slice(0, small ? 2 : 3)
-        .forEach((e) => signals.push({ e, l: l + 1, t: 0, v: rnd(0.012, 0.02) }));
-    };
-
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const dot = (img, x, y, s, a) => { ctx.globalAlpha = a; ctx.drawImage(img, x - s * 2, y - s * 2, s * 4, s * 4); };
     const dust = Array.from({ length: Math.round(34 * K) }, () => ({ x: Math.random(), y: Math.random(), s: rnd(6, 28), a: rnd(0.04, 0.16), vx: rnd(-0.004, 0.004), vy: rnd(-0.006, -0.001) }));
-    let W = 0, H = 0;
+    const drawDust = (dt, W, H) => { for (const d of dust) { d.x = (d.x + d.vx * dt + 1) % 1; d.y = (d.y + d.vy * dt + 1) % 1; dot(ICE, d.x * W, d.y * H, d.s, d.a); } };
+    let W = 0, H = 0, draw, layout;
+
+    {
+      // the sphere: nodes spread evenly over a globe (a Fibonacci spiral), each linked to its nearest
+      // neighbours; it turns slowly, the far side dims and shrinks, and signals hop node to node
+      const COUNT = small ? 70 : 120, pts = [];
+      for (let i = 0; i < COUNT; i++) {
+        const y = 1 - (2 * (i + 0.5)) / COUNT, r = Math.sqrt(1 - y * y), th = i * Math.PI * (3 - Math.sqrt(5));
+        pts.push({ x: Math.cos(th) * r, y, z: Math.sin(th) * r, act: 0, sx: 0, sy: 0, d: 0 });
+      }
+      const links = [];
+      pts.forEach((p, i) => pts.map((q, j) => [j, Math.hypot(p.x - q.x, p.y - q.y, p.z - q.z)]).filter(([j]) => j > i)
+        .sort((a, b) => a[1] - b[1]).slice(0, 3).forEach(([j]) => links.push([p, pts[j]])));
+      const nbrs = new Map(pts.map((p) => [p, []]));
+      links.forEach(([a, b]) => { nbrs.get(a).push(b); nbrs.get(b).push(a); });
+      const hops = [];
+      const hop = (from, ttl) => { from.act = 1; if (ttl <= 0) return;
+        const n = nbrs.get(from); hops.push({ a: from, b: n[Math.floor(Math.random() * n.length)], t: 0, ttl: ttl - 1 }); };
+      let cx = 0, cy = 0, R = 0;
+      layout = (b, r) => { cx = r.left - b.left + r.width / 2; cy = r.top - b.top + r.height / 2; R = Math.min(r.width, r.height) * 0.42; };
+      let last = 0, nextFire = 0;
+      draw = (time) => {
+        const dt = Math.min(0.05, time - last || 0.016); last = time;
+        if (!still && time > nextFire) { nextFire = time + rnd(0.25, 0.6); hop(pts[Math.floor(Math.random() * COUNT)], 6 + Math.floor(Math.random() * 6)); }
+        // turn about the vertical axis, tilted toward the viewer
+        const ay = time * 0.18, tilt = 0.38, ca = Math.cos(ay), sa = Math.sin(ay), ct = Math.cos(tilt), st = Math.sin(tilt);
+        for (const p of pts) {
+          const x = p.x * ca + p.z * sa, z0 = -p.x * sa + p.z * ca, y = p.y * ct - z0 * st, z = p.y * st + z0 * ct;
+          const persp = 2.6 / (2.6 - z);
+          p.sx = cx + x * R * persp; p.sy = cy + y * R * persp; p.d = (z + 1) / 2;   // 0 far side, 1 near side
+        }
+        ctx.clearRect(0, 0, W, H);
+        ctx.globalCompositeOperation = "lighter"; drawDust(dt, W, H);
+        dot(CYAN, cx, cy, R * 0.28, 0.07);   // a faint core glow inside the globe
+        ctx.globalCompositeOperation = "source-over"; ctx.lineWidth = 1; ctx.strokeStyle = "#00e5ff";
+        for (const [a, b] of links) {
+          ctx.globalAlpha = (0.03 + 0.17 * Math.min(a.d, b.d) ** 1.5) + 0.3 * Math.max(a.act, b.act);
+          ctx.beginPath(); ctx.moveTo(a.sx, a.sy); ctx.lineTo(b.sx, b.sy); ctx.stroke();
+        }
+        ctx.globalCompositeOperation = "lighter";
+        for (let i = hops.length - 1; i >= 0; i--) {
+          const h = hops[i]; h.t += dt * 3.2;
+          if (h.t >= 1) { hops.splice(i, 1); hop(h.b, h.ttl); continue; }
+          for (let k = 0; k < 4; k++) { const t = Math.max(0, h.t - k * 0.06);
+            dot(k ? ICE : CYAN, h.a.sx + (h.b.sx - h.a.sx) * t, h.a.sy + (h.b.sy - h.a.sy) * t, (3.2 - k * 0.6) * (0.6 + 0.6 * h.a.d), (0.95 - k * 0.2) * (0.4 + 0.6 * h.a.d)); }
+        }
+        for (const p of pts) {
+          p.act *= Math.pow(0.15, dt);
+          dot(p.act > 0.3 ? CYAN : ICE, p.sx, p.sy, (1.4 + 2.2 * p.d) * (1 + p.act * 1.6), (0.15 + 0.7 * p.d) * (0.6 + 0.4 * p.act) + 0.3 * p.act);
+        }
+        ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over";
+      };
+      if (still) pts.forEach((p) => (p.act = Math.random() < 0.1 ? 0.8 : 0));
+    }
+
     const size = () => {
       const dpr = Math.min(devicePixelRatio || 1, 2), b = screen.getBoundingClientRect(), r = box.getBoundingClientRect();
       W = b.width; H = b.height; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const left = r.left - b.left, top = r.top - b.top, padX = Math.min(40, r.width * 0.1);
-      const gap = Math.min(52, (r.height * 0.86) / (Math.max(...SIZES) - 1));
-      layers.forEach((layer, l) => layer.forEach((n, i) => {
-        n.x = left + padX + (l / (layers.length - 1)) * (r.width - 2 * padX);
-        n.y = top + r.height / 2 + (i - (layer.length - 1) / 2) * gap;
-      }));
-    };
-    const dot = (img, x, y, s, a) => { ctx.globalAlpha = a; ctx.drawImage(img, x - s * 2, y - s * 2, s * 4, s * 4); };
-    let last = 0, nextFire = 0;
-    const draw = (time) => {
-      const dt = Math.min(0.05, time - last || 0.016); last = time;
-      if (!still && time > nextFire) { nextFire = time + rnd(0.35, 0.8); fire(layers[0][Math.floor(Math.random() * layers[0].length)], 0); }
-      ctx.clearRect(0, 0, W, H);
-      ctx.globalCompositeOperation = "lighter";
-      for (const d of dust) { d.x = (d.x + d.vx * dt + 1) % 1; d.y = (d.y + d.vy * dt + 1) % 1; dot(ICE, d.x * W, d.y * H, d.s, d.a); }
-      // edges: faint lines, brighter while a signal runs along them
-      ctx.globalCompositeOperation = "source-over"; ctx.lineWidth = 1;
-      for (const e of edges) {
-        ctx.globalAlpha = 0.05 + 0.1 * e.w + 0.35 * Math.max(e.from.act, e.to.act) * e.w;
-        ctx.strokeStyle = "#00e5ff"; ctx.beginPath(); ctx.moveTo(e.from.x, e.from.y); ctx.lineTo(e.to.x, e.to.y); ctx.stroke();
-      }
-      ctx.globalCompositeOperation = "lighter";
-      for (let i = signals.length - 1; i >= 0; i--) {
-        const s = signals[i]; s.t += s.v * dt * 60;
-        if (s.t >= 1) { signals.splice(i, 1); if (s.e.to.act < 0.6) fire(s.e.to, s.l); else s.e.to.act = 1; continue; }
-        for (let k = 0; k < 4; k++) {   // a bright head with a short fading tail
-          const t = Math.max(0, s.t - k * 0.035);
-          dot(k ? ICE : CYAN, s.e.from.x + (s.e.to.x - s.e.from.x) * t, s.e.from.y + (s.e.to.y - s.e.from.y) * t, 3.4 - k * 0.7, 0.9 - k * 0.2);
-        }
-      }
-      // nodes: a core that flares when it fires, inside a slowly orbiting swarm of particles
-      for (const layer of layers) for (const n of layer) {
-        n.act *= Math.pow(0.12, dt);
-        dot(CYAN, n.x, n.y, 4 + n.act * 9, 0.35 + 0.6 * n.act);
-        for (const p of n.swarm) {
-          const a = p.a + time * p.sp, r = p.r * (1 + n.act * 0.5);
-          dot(ICE, n.x + Math.cos(a) * r, n.y + Math.sin(a) * r * 0.85, p.s, 0.25 + 0.5 * n.act);
-        }
-      }
-      ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over";
+      layout(b, r);
     };
     let on = true, raf = 0;
     const loop = (ms) => { draw(ms / 1000); raf = on ? requestAnimationFrame(loop) : 0; };
     const run = (go) => { on = go; if (go && !raf) raf = requestAnimationFrame(loop); };
     size();
     new ResizeObserver(() => { size(); if (still) draw(2); }).observe(screen);
-    if (still) { layers.forEach((l) => l.forEach((n) => (n.act = Math.random() * 0.6))); draw(2); }
+    if (still) draw(2);
     else {
       let seen = true;
       new IntersectionObserver(([e]) => { seen = e.isIntersecting; run(seen && !document.hidden); }).observe(screen);
@@ -236,68 +257,186 @@ if (!still) {
   }
 }
 
-// Projects wheel, like a phone's alarm picker: native scroll with snapping does the moving; each row is
-// tilted by its distance from the centre so the list reads as a drum, and the list loops (a copy of the
-// rows sits above and below; when the wheel settles in a copy it jumps silently to the same row in the
-// middle set). Tapping a row rolls it to the centre; tapping the centred row opens it. Up/down arrows
-// move one row. It spins in once on load, like alarm digits rolling into place.
+// Projects wheel, like a phone's alarm picker, with a clear "engaged" state.
+// At rest, scrolling over it scrolls the page. It engages on intent: the pointer moves onto it and
+// rests for half a second (a line draws across its top edge meanwhile), or a click, Tab or touch.
+// Engaged, each scroll step rolls exactly one project with an eased settle; scrolling past the first
+// or last project releases it and the visitor's own scrolling carries on, softly smoothed.
+// Moving the pointer away or pressing Esc releases it. Phones keep native swiping (touch is intent
+// enough) with the same engaged look. It spins in once on load and starts on project one.
 {
-  const list = document.querySelector(".picker__list");
+  const picker = document.querySelector(".picker"), list = picker?.querySelector(".picker__list");
   if (list) {
-    const originals = [...list.children], N = originals.length;
-    const copy = () => originals.map((li) => { const c = li.cloneNode(true); c.setAttribute("aria-hidden", "true"); c.querySelector("a").tabIndex = -1; return c; });
-    list.prepend(...copy()); list.append(...copy());
-    const rows = [...list.querySelectorAll(".picker__item")];   // 3N rows; the real ones are N .. 2N-1
+    const rows = [...list.querySelectorAll(".picker__item")], N = rows.length;
+    const fine = matchMedia("(pointer: fine)").matches;
+    picker.classList.toggle("is-fine", fine);
+    const hint = picker.querySelector(".picker__hint"), count = picker.querySelector(".picker__count b");
+    const rail = picker.querySelector(".picker__rail");
+    rail.append(...rows.map(() => document.createElement("i")));
+    const ticks = [...rail.children];
+    const pad = (n) => String(n).padStart(2, "0");
+    picker.querySelector(".picker__count").lastChild.textContent = ` / ${pad(N)}`;
     const rowH = () => rows[0].parentElement.offsetHeight;
     const topFor = (i) => i * rowH();   // the list's padding centres row i at scrollTop = i * row height
-    let current = -1, queued = false, spinning = false, settle;
+
+    let current = -1;
     const paint = () => {
-      queued = false;
       const mid = list.scrollTop / rowH();
       rows.forEach((row, i) => {
         const d = i - mid, ad = Math.min(Math.abs(d), 3);
-        if (Math.abs(d) > 4) { row.style.opacity = "0"; return; }
         row.style.transform = `perspective(700px) rotateX(${Math.max(-75, Math.min(75, -d * 24))}deg) scale(${1 - ad * 0.06})`;
         row.style.opacity = String(Math.max(0, 1 - ad * 0.32));
       });
-      const now = Math.round(mid);
-      if (now !== current) { rows[current]?.classList.remove("is-on"); rows[now]?.classList.add("is-on"); current = now; }
+      const now = Math.max(0, Math.min(N - 1, Math.round(mid)));
+      if (now !== current) {
+        rows[current]?.classList.remove("is-on"); ticks[current]?.classList.remove("is-on");
+        rows[now].classList.add("is-on"); ticks[now].classList.add("is-on");
+        const was = current; count.textContent = pad(now + 1); current = now;
+        if (was !== -1) picker.dispatchEvent(new CustomEvent("project-change", { detail: now }));
+      }
     };
-    const queue = () => { if (!queued) { queued = true; requestAnimationFrame(paint); } };
-    // once the wheel rests in a copy, jump to the same row in the middle set (same picture, so unseen)
-    const recentre = () => {
-      if (spinning) return;
-      const i = Math.round(list.scrollTop / rowH());
-      if (i < N || i >= 2 * N) { list.scrollTop = topFor(N + (((i % N) + N) % N)); paint(); }
+    let say = "";
+    const setHint = (text) => {
+      if (text === say) return; say = text;
+      hint.classList.add("is-swapping");
+      setTimeout(() => { hint.textContent = text; hint.classList.remove("is-swapping"); }, 150);
     };
-    list.addEventListener("scroll", () => { queue(); clearTimeout(settle); settle = setTimeout(recentre, 160); }, { passive: true });
-    addEventListener("resize", () => { list.scrollTop = topFor(N + (((current % N) + N) % N)); queue(); });
-    const go = (i) => list.scrollTo({ top: topFor(i), behavior: still ? "auto" : "smooth" });
+    const restHint = fine ? "Hover to browse" : "Swipe to browse";
+    const onHint = fine ? "Scroll to turn · Esc to leave" : "Swipe to turn";
+
+    // eased roll to a row; a new step retargets from wherever the wheel is
+    let target = 0, anim = 0;
+    const ease = (k) => 1 - Math.pow(1 - k, 4);
+    const rollTo = (i, ms = 640) => {
+      target = Math.max(0, Math.min(N - 1, i));
+      cancelAnimationFrame(anim);
+      const from = list.scrollTop, to = topFor(target), t0 = performance.now(), T = still ? 0 : ms;
+      const step = (now) => {
+        const k = T ? Math.min(1, (now - t0) / T) : 1;
+        list.scrollTop = from + (to - from) * ease(k); paint();
+        if (k < 1) anim = requestAnimationFrame(step);
+      };
+      anim = requestAnimationFrame(step);
+    };
+
+    // engaged state
+    let engaged = false, armTimer = 0, quietUntil = 0;
+    const engage = () => {
+      clearTimeout(armTimer); armTimer = 0;
+      picker.classList.remove("is-arming");
+      if (engaged) return;
+      engaged = true; picker.classList.add("is-engaged"); setHint(onHint);
+    };
+    const release = () => {
+      clearTimeout(armTimer); armTimer = 0;
+      picker.classList.remove("is-arming");
+      if (!engaged) return;
+      engaged = false; picker.classList.remove("is-engaged"); setHint(restHint);
+    };
+    hint.textContent = say = restHint;
+
+    if (fine) {
+      // arming: only real pointer movement counts (a page scrolling under a still pointer does not)
+      let lx = null, ly = null;
+      picker.addEventListener("pointermove", (e) => {
+        const moved = lx !== null && Math.hypot(e.clientX - lx, e.clientY - ly) > 1;
+        lx = e.clientX; ly = e.clientY;
+        if (engaged || armTimer || !moved || performance.now() < quietUntil) return;
+        picker.classList.add("is-arming");
+        armTimer = setTimeout(engage, 500);
+      });
+      picker.addEventListener("pointerleave", () => { lx = ly = null; release(); });
+      picker.addEventListener("pointerdown", engage);
+      addEventListener("scroll", () => { if (armTimer) { clearTimeout(armTimer); armTimer = 0; picker.classList.remove("is-arming"); } }, { passive: true });
+
+      // leaving the wheel: the visitor's own scrolling moves the page, smoothed so it trails softly
+      // behind their input and starts gently (a quarter speed, building to full over 0.8 s). When they
+      // stop and the page has settled, the browser's own scrolling takes over again.
+      let soft = null;
+      const settle = () => {
+        if (!soft) return;
+        const now = performance.now(), gap = soft.target - scrollY;
+        // at least 1px a frame: smaller steps are rounded away and the page would never arrive
+        const step = Math.abs(gap * 0.085) < 1 ? Math.sign(gap) * Math.min(1, Math.abs(gap)) : gap * 0.085;
+        scrollTo(0, scrollY + step);
+        // arrived and the visitor has stopped (or, as a safety, idle for 1.5 s): hand back to the browser
+        if ((Math.abs(gap) < 1 && now - soft.last > 300) || now - soft.last > 1500) { soft = null; return; }
+        soft.raf = requestAnimationFrame(settle);
+      };
+      const feed = (dy) => {
+        const now = performance.now(), ramp = Math.min(1, 0.25 + 0.75 * ((now - soft.t0) / 800));
+        const max = document.documentElement.scrollHeight - innerHeight;
+        soft.target = Math.max(0, Math.min(max, soft.target + dy * ramp)); soft.last = now;
+      };
+      const leave = (dy) => {
+        release(); quietUntil = performance.now() + 1600;
+        if (still) return scrollBy(0, dy);
+        cancelAnimationFrame(soft?.raf);
+        soft = { target: scrollY, t0: performance.now(), last: 0 };
+        feed(dy); soft.raf = requestAnimationFrame(settle);
+      };
+      addEventListener("wheel", (e) => {
+        if (!soft || e.defaultPrevented) return;
+        e.preventDefault();
+        feed(e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1));
+      }, { passive: false });
+      // a key, touch or drag of the scrollbar hands straight back to the browser
+      const handBack = () => { if (soft) { cancelAnimationFrame(soft.raf); soft = null; } };
+      ["keydown", "touchstart", "mousedown"].forEach((t) => addEventListener(t, handBack, { passive: true }));
+
+      // engaged scrolling: one project per step, spaced so a trackpad flick cannot race
+      let acc = 0, lastStep = 0;
+      list.addEventListener("wheel", (e) => {
+        if (!engaged) return;   // at rest the page scrolls as normal
+        const dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1);
+        const dir = Math.sign(dy);
+        if (!dir) return;
+        e.preventDefault();
+        const atEnd = (dir > 0 && target >= N - 1) || (dir < 0 && target <= 0);
+        const now = performance.now();
+        if (atEnd) {
+          // leave at once (the visitor scrolls on, smoothed), unless this is the tail of the flick that just reached the end
+          if (now - lastStep > 350) leave(dy);
+          return;
+        }
+        acc += dy;
+        if (Math.abs(acc) >= 40 && now - lastStep > 180) {
+          lastStep = now; acc = 0;
+          rollTo(target + dir);
+        }
+      }, { passive: false });
+      addEventListener("keydown", (e) => { if (e.key === "Escape" && engaged) release(); });
+    } else {
+      // touch: native swiping with snapping; the engaged look while the finger is on it and shortly after
+      let restTimer = 0;
+      const touchOn = () => { clearTimeout(restTimer); engage(); };
+      const touchOff = () => { clearTimeout(restTimer); restTimer = setTimeout(release, 1200); };
+      list.addEventListener("touchstart", touchOn, { passive: true });
+      list.addEventListener("touchend", touchOff, { passive: true });
+      list.addEventListener("scroll", () => { paint(); target = current; if (engaged) touchOff(); }, { passive: true });
+    }
+
+    // taps and keys: tapping a row rolls it to the centre, tapping the centred row opens it
     rows.forEach((row, i) => {
-      row.addEventListener("click", (e) => { if (i !== current) { e.preventDefault(); go(i); } });
-      row.addEventListener("focus", () => { if (i !== current) go(i); });
+      row.addEventListener("click", (e) => { if (i !== current) { e.preventDefault(); engage(); rollTo(i); } });
+      row.addEventListener("focus", () => { engage(); if (i !== current) rollTo(i); });
       row.addEventListener("keydown", (e) => {
         const step = e.key === "ArrowDown" ? 1 : e.key === "ArrowUp" ? -1 : 0;
-        if (!step) return;
+        if (!step || !rows[i + step]) return;
         e.preventDefault();
-        const next = current + step;   // roll one row, then hand focus to the real row it shows
-        go(next);
-        rows[N + (((next % N) + N) % N)].focus({ preventScroll: true });
+        rows[i + step].focus({ preventScroll: true });
       });
     });
-    list.scrollTop = topFor(N); paint();
-    // the spin-in: roll down through the copies and settle on the first project with an ease-out
+    picker.addEventListener("focusout", (e) => { if (!picker.contains(e.relatedTarget) && !picker.matches(":hover")) release(); });
+    addEventListener("resize", () => { list.scrollTop = topFor(current); paint(); });
+    list.scrollTop = 0; paint();
+
+    // the spin-in: roll up from the last project and settle on the first
     if (!still) {
       const spin = () => {
-        spinning = true;
-        const from = topFor(0), to = topFor(N), t0 = performance.now(), T = 1700;
-        list.style.scrollSnapType = "none"; list.scrollTop = from;
-        const step = (now) => {
-          const k = Math.min(1, (now - t0) / T), e = 1 - Math.pow(1 - k, 4);
-          list.scrollTop = from + (to - from) * e;
-          if (k < 1) requestAnimationFrame(step); else { list.style.scrollSnapType = ""; spinning = false; }
-        };
-        requestAnimationFrame(step);
+        list.style.scrollSnapType = "none"; list.scrollTop = topFor(N - 1); paint();
+        rollTo(0, 1700);
+        setTimeout(() => { list.style.scrollSnapType = ""; }, 1750);
       };
       const html = document.documentElement;
       if (html.classList.contains("intro-play") && !html.classList.contains("intro-done")) {

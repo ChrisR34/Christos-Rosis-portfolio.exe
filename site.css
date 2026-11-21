@@ -178,29 +178,67 @@ main > .hero--screen { --hgap: 12px; --hpadb: 16px; }
 .screen__pill { font: 500 13px/1 var(--font-text); color: #e3f4f7; padding: 7px 14px; border-radius: 999px;
   border: 1px solid rgb(138 244 255 / .55); background: rgb(3 8 11 / .6); backdrop-filter: blur(6px); }
 
-/* the projects wheel: a drum that snaps each item into the glowing band, like a phone's alarm picker.
-   site.js tilts each row by its distance from the centre and spins the wheel in once. */
-.picker { --row: 76px; --rows: 5; grid-area: cards; align-self: end; position: relative; height: calc(var(--row) * var(--rows));
-  border-radius: 24px; border: 1px solid rgb(255 255 255 / .1); background: rgb(14 24 28 / .6); backdrop-filter: blur(14px) saturate(1.2); overflow: hidden; }
+/* the projects wheel, like a phone's alarm picker. It rests until the visitor shows intent (the pointer
+   rests on it, a click, Tab or a touch), then engages: the border lights, the band turns from a calm
+   steel-teal to bright cyan, and a readout, tick rail and hint appear. site.js tilts each row by its
+   distance from the centre, rolls one project per scroll step, and past either end the page glides on. */
+.picker { --row: 76px; --rows: 5; --hud: 30px; --ease: cubic-bezier(.22, 1, .36, 1); grid-area: cards; align-self: end; position: relative;
+  /* the rows, a strip above and below for the readout and hint, and the 1px border; the list itself is
+     exactly the rows tall, so it ends exactly on the first and last project */
+  height: calc(var(--row) * var(--rows) + 2 * var(--hud) + 2px);
+  border-radius: 24px; border: 1px solid rgb(255 255 255 / .1); background: rgb(14 24 28 / .6); backdrop-filter: blur(14px) saturate(1.2); overflow: hidden;
+  transition: border-color .6s var(--ease), box-shadow .6s var(--ease), background-color .6s var(--ease); }
+.picker.is-engaged { border-color: rgb(0 229 255 / .5); background-color: rgb(8 24 29 / .72);
+  box-shadow: 0 0 0 1px rgb(0 229 255 / .12), 0 0 48px rgb(0 229 255 / .14); }
+
+/* the band: steel-teal at rest; the bright cyan layer fades in over it when engaged */
 .picker__band { position: absolute; left: 8px; right: 8px; top: calc(50% - var(--row) / 2); height: var(--row); border-radius: 18px; pointer-events: none;
-  background: radial-gradient(80% 120% at 100% 0%, rgb(190 250 255 / .6), transparent 60%), linear-gradient(135deg, #0a6d80 0%, #12a9c0 55%, #5fdcec 100%);
-  box-shadow: 0 0 30px rgb(0 229 255 / .25), inset 0 1px 0 rgb(255 255 255 / .3); }
-.picker__list { position: relative; height: 100%; margin: 0; padding: calc((var(--row) * var(--rows) - var(--row)) / 2) 0; list-style: none;
-  overflow-y: auto; scroll-snap-type: y mandatory; scrollbar-width: none; overscroll-behavior-y: auto;
+  background: linear-gradient(135deg, #0e3b45 0%, #135d6a 55%, #2a8392 100%); box-shadow: inset 0 1px 0 rgb(255 255 255 / .12);
+  transition: box-shadow .6s var(--ease); }
+.picker__band::before { content: ""; position: absolute; inset: 0; border-radius: inherit; opacity: 0; transition: opacity .6s var(--ease);
+  background: radial-gradient(80% 120% at 100% 0%, rgb(190 250 255 / .6), transparent 60%), linear-gradient(135deg, #0a6d80 0%, #12a9c0 55%, #5fdcec 100%); }
+.picker.is-engaged .picker__band { box-shadow: 0 0 30px rgb(0 229 255 / .28), inset 0 1px 0 rgb(255 255 255 / .3); }
+.picker.is-engaged .picker__band::before { opacity: 1; }
+
+/* the arming line: draws across the top edge while the pointer rests, and stays lit once engaged */
+.picker__arm { position: absolute; top: 0; left: 24px; right: 24px; height: 1px; z-index: 3; pointer-events: none; transform-origin: left;
+  background: linear-gradient(90deg, transparent, #8af4ff 20%, #8af4ff 80%, transparent); box-shadow: 0 0 8px #00e5ff;
+  transform: scaleX(0); opacity: 0; transition: transform .25s ease, opacity .25s ease; }
+.picker.is-arming .picker__arm { transform: scaleX(1); opacity: 1; transition: transform .5s linear, opacity .15s ease; }
+.picker.is-engaged .picker__arm { transform: scaleX(1); opacity: .8; }
+
+/* readout, rail and hint: dim at rest, lit when engaged */
+.picker__hud, .picker__hint { position: absolute; left: 18px; right: 18px; z-index: 2; margin: 0; pointer-events: none;
+  font: 11px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: #5f7c85; transition: color .6s var(--ease), opacity .3s ease; }
+.picker__hud { top: 11px; display: flex; justify-content: space-between; }
+.picker__count b { font-weight: 500; color: #9fb6bf; transition: color .6s var(--ease); }
+.picker__hint { bottom: 11px; text-align: center; letter-spacing: .1em; }
+.picker__hint.is-swapping { opacity: 0; }
+.picker.is-engaged :is(.picker__hud, .picker__hint) { color: #9fdbe6; }
+.picker.is-engaged .picker__count b { color: #fff; }
+.picker__rail { position: absolute; left: 14px; top: 50%; z-index: 2; display: grid; gap: 5px; transform: translateY(-50%); pointer-events: none; }
+.picker__rail i { display: block; width: 4px; height: 2px; border-radius: 1px; background: rgb(255 255 255 / .28); transition: width .5s var(--ease), background-color .5s var(--ease); }
+.picker__rail i.is-on { width: 10px; background: #fff; }
+.picker.is-engaged .picker__rail i.is-on { box-shadow: 0 0 6px #8af4ff; }
+
+.picker__list { position: absolute; inset: var(--hud) 0; margin: 0; padding: calc((var(--row) * var(--rows) - var(--row)) / 2) 0; list-style: none;
+  overflow-y: auto; scroll-snap-type: y mandatory; scrollbar-width: none; overscroll-behavior-y: auto; transition: transform .5s var(--ease);
   -webkit-mask: linear-gradient(transparent, #000 32%, #000 68%, transparent); mask: linear-gradient(transparent, #000 32%, #000 68%, transparent); }
+/* mouse and trackpad: site.js turns the wheel, one eased step at a time, only while engaged */
+.picker.is-fine .picker__list { overflow: hidden; scroll-snap-type: none; }
 .picker__list::-webkit-scrollbar { display: none; }
 .picker__list > li { height: var(--row); scroll-snap-align: center; }
-.picker__item { height: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-content: center; column-gap: 12px; padding: 0 22px;
+.picker__item { height: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-content: center; column-gap: 12px; padding: 0 22px 0 32px;
   color: #e3f4f7; text-decoration: none; transform-origin: center; backface-visibility: hidden; will-change: transform, opacity; }
 .picker__item b { font: 500 20px/1.2 var(--font-display); letter-spacing: -.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .picker__item small { grid-column: 1; font: 12px/1.4 var(--font-mono); color: #9fb6bf; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .picker__go { grid-row: 1 / 3; grid-column: 2; align-self: center; width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%;
-  font-style: normal; background: rgb(255 255 255 / .92); color: #072027; opacity: 0; transform: scale(.6); transition: opacity .25s, transform .25s; }
-.picker__item.is-on small { color: #e6fbff; }
-.picker__item.is-on .picker__go { opacity: 1; transform: none; }
+  font-style: normal; background: rgb(255 255 255 / .92); color: #072027; opacity: 0; transform: scale(.6); transition: opacity .4s var(--ease), transform .4s var(--ease); }
+.picker__item.is-on small { color: #d5eef3; }
+.picker__item.is-on .picker__go { opacity: .55; transform: scale(.85); }
+.picker.is-engaged .picker__item.is-on .picker__go { opacity: 1; transform: none; }
 .picker__item.is-on:hover .picker__go { transform: translateX(3px); }
 .picker__item:focus-visible { outline: none; }
-.picker:focus-within { border-color: rgb(138 244 255 / .6); }
 
 /* below 1280: the screen grows with what it holds; words and reading side by side, the cards in a row under them */
 @media (max-width: 1279px) {
@@ -225,3 +263,47 @@ main > .hero--screen { --hgap: 12px; --hpadb: 16px; }
 
 /* footer column headings (Projects, About, Contact, Elsewhere) glow cyan; the footer is dark in both themes */
 footer.closing .footer__col h3 { color: #00e5ff; text-shadow: 0 0 10px rgb(0 229 255 / .55), 0 0 24px rgb(0 229 255 / .3); }
+
+
+/* the top bar moves with the reader (site.js): it slides away scrolling down, glides back scrolling up,
+   and past the hero condenses into a slimmer floating glass bar */
+.nav { transition: transform .55s cubic-bezier(.22, 1, .36, 1), top .55s cubic-bezier(.22, 1, .36, 1), left .55s cubic-bezier(.22, 1, .36, 1),
+  right .55s cubic-bezier(.22, 1, .36, 1), height .55s cubic-bezier(.22, 1, .36, 1), border-radius .55s ease, background-color .55s ease, box-shadow .55s ease; }
+.nav.is-floating { top: 10px; left: max(12px, calc((100vw - 1280px) / 2)); right: max(12px, calc((100vw - 1280px) / 2)); height: 56px;
+  border: 1px solid rgb(0 229 255 / .18); border-radius: 999px; background: rgb(5 11 14 / .72); backdrop-filter: blur(14px) saturate(1.3);
+  box-shadow: 0 10px 40px rgb(0 0 0 / .35), 0 0 30px rgb(0 229 255 / .06); }
+:root[data-theme="light"] .nav.is-floating { background: rgb(233 238 243 / .78); border-color: rgb(0 108 121 / .2); box-shadow: 0 10px 30px rgb(23 35 51 / .12); }
+.nav.is-floating .nav__bar { padding-inline: 20px; }
+.nav.is-tucked { transform: translateY(calc(-100% - 16px)); }
+@media (prefers-reduced-motion: reduce) { .nav { transition: none; } }
+/* the Projects dropdown matches the rounded bar: a floating glass panel just under it, same edges and
+   glass; an invisible bridge over the gap keeps it open as the pointer moves down onto it */
+@media (min-width: 1024px) {
+  .nav .nav__menu { top: calc(100% + 10px); left: max(12px, calc((100vw - 1280px) / 2)); right: max(12px, calc((100vw - 1280px) / 2));
+    padding: var(--s-6) 0; border: 1px solid rgb(0 229 255 / .18); border-radius: 28px; overflow: visible;
+    background: rgb(5 11 14 / .95); backdrop-filter: blur(20px) saturate(1.3);
+    box-shadow: 0 18px 50px rgb(0 0 0 / .4), 0 0 30px rgb(0 229 255 / .06);
+    transform: translateY(-8px) scale(.985); transform-origin: top center; }
+  .nav.is-floating .nav__menu { left: 0; right: 0; }
+  .nav .nav__menu::before { content: ""; position: absolute; left: 0; right: 0; top: -12px; height: 12px; }
+  :root[data-theme="light"] .nav .nav__menu { background: rgb(233 238 243 / .96); border-color: rgb(0 108 121 / .2); box-shadow: 0 18px 40px rgb(23 35 51 / .14); }
+}
+/* the ruler's pill: a live status light, London and availability */
+.screen__pill { display: inline-flex; align-items: center; gap: 8px; letter-spacing: .01em; }
+.screen__sep { color: rgb(138 244 255 / .6); }
+.screen__live { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 8px #4ade80; position: relative; }
+.screen__live::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid #4ade80; opacity: 0; animation: live-ring 2.4s ease-out infinite; }
+@keyframes live-ring { 0% { transform: scale(.5); opacity: .8; } 100% { transform: scale(1.8); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .screen__live::after { animation: none; } }
+/* the floating bar on phones: a little tighter inside so the name and buttons sit clear of its rounded ends */
+@media (max-width: 639px) {
+  .nav.is-floating { top: 8px; left: 8px; right: 8px; height: 56px; }
+  .nav.is-floating .nav__bar { width: 100%; padding-inline: 14px 6px; gap: 10px; }
+  .nav.is-floating .nav__actions .btn, .nav.is-floating > .nav__bar > .btn { padding-inline: 14px; }
+}
+/* phones and tablets: with the menu open the bar becomes a plain full-width bar again, so the full-screen
+   menu (positioned against the screen) is not trapped inside the rounded glass */
+@media (max-width: 1023px) {
+  .nav.is-floating.is-open { top: 0; left: 0; right: 0; height: var(--nav); border-radius: 0; border-width: 0 0 1px;
+    backdrop-filter: none; background: var(--bg); box-shadow: none; transform: none; }
+}
