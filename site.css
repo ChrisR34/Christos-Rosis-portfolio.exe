@@ -222,3 +222,6 @@ main > .hero--screen { --hgap: 12px; --hpadb: 16px; }
   .picker__item b { font-size: 18px; }
 }
 
+
+/* footer column headings (Projects, About, Contact, Elsewhere) glow cyan; the footer is dark in both themes */
+footer.closing .footer__col h3 { color: #00e5ff; text-shadow: 0 0 10px rgb(0 229 255 / .55), 0 0 24px rgb(0 229 255 / .3); }
