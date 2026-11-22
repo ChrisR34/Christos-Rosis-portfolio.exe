@@ -57,14 +57,7 @@
 <link rel="stylesheet" href="assets/ui/terminal-run/fragment.css">
 <link rel="stylesheet" href="assets/ui/code/fragment.css">
 <link rel="stylesheet" href="assets/diagrams/diagram.css">
-<script>
-  // first visit this tab: the calibration intro plays and hands over to its own hero rise (site.js);
-  // otherwise the kit's hero entrance runs as usual. Reduced motion: neither.
-  (() => { const html = document.documentElement; let play = false;
-    try { play = !matchMedia("(prefers-reduced-motion: reduce)").matches && !sessionStorage.getItem("intro-seen"); } catch {}
-    if (play) { html.classList.add("intro-play"); setTimeout(() => html.classList.add("intro-done"), 4000); }   // failsafe if site.js never runs
-    else { html.classList.add('m-enter'); setTimeout(() => html.classList.add('m-enter-done'), 700); } })();
-</script>
+<script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 <script src="assets/backgrounds/backgrounds.js"></script>
 <script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
 <link rel="modulepreload" href="assets/moments/moments.js">
@@ -72,16 +65,6 @@
 <link rel="stylesheet" href="site.css">
 </head>
 <body>
-<!-- entry: a noisy sensor trace settles to a calibrated reading, then wipes up (site.js) -->
-<div class="intro" aria-hidden="true">
-  <div class="intro__top"><span>Christos Rosis</span><span class="intro__state">Calibrating</span></div>
-  <svg class="intro__trace" viewBox="0 0 1000 200" preserveAspectRatio="none"><line class="intro__axis" x1="0" y1="100" x2="1000" y2="100"/><polyline class="intro__line" points="0,100 1000,100"/></svg>
-  <div class="intro__readout">
-    <div><span>Temp</span><strong data-intro-temp>00.0</strong><small>°C</small></div>
-    <div><span>RH</span><strong data-intro-hum>00.0</strong><small>%</small></div>
-  </div>
-  <p class="intro__skip">Click or press any key to skip</p>
-</div>
 <!-- type: software (a developer's portfolio: the projects are software, shown as their own UI)
      deal: hero collage, nav nav-centre, close close-type, footer footer-dark, rhythm dark-band, buttons solid, mark: the client's own logo, grounds none
      palette: the client's own (start.mjs brand), dark and light, kept by request; violet second accent dropped (kit rule)
@@ -337,6 +320,7 @@
       <div class="footer__legal">
         <span>&copy; 2026 Christos Rosis</span>
         <span>Product names and logos are trademarks of their owners</span>
+        <button class="theme-toggle" type="button" data-consent-reset>Cookie settings</button>
         <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false">Light theme</button>
       </div>
     </div>
@@ -360,8 +344,33 @@
 <script type="module" src="assets/layout/layout.js"></script>
 <script type="module" src="assets/diagrams/mount.js"></script>
 <script type="module" src="site.js"></script>
-<!-- Google tag -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-CVC4PLRF7F"></script>
-<script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag("js", new Date()); gtag("config", "G-CVC4PLRF7F");</script>
+<div class="consent" role="region" aria-label="Cookie consent" hidden>
+  <p>Can I use Google Analytics cookies to count visits to this site? Nothing else is tracked.</p>
+  <div class="consent__btns">
+    <button class="btn btn--secondary" type="button" data-consent="no">Reject</button>
+    <button class="btn btn--secondary" type="button" data-consent="yes">Accept</button>
+  </div>
+</div>
+<script>
+  // Google Analytics loads only after the visitor accepts (UK PECR); "Cookie settings" in the footer asks again
+  (() => {
+    const KEY = "analytics-consent", box = document.querySelector(".consent");
+    const load = () => {
+      window.dataLayer = window.dataLayer || []; window.gtag = function () { dataLayer.push(arguments); };
+      gtag("js", new Date()); gtag("config", "G-CVC4PLRF7F");
+      document.head.append(Object.assign(document.createElement("script"), { async: true, src: "https://www.googletagmanager.com/gtag/js?id=G-CVC4PLRF7F" }));
+    };
+    let choice = null; try { choice = localStorage.getItem(KEY); } catch {}
+    if (choice === "yes") load(); else if (choice !== "no") box.hidden = false;
+    box.addEventListener("click", (e) => {
+      const v = e.target.closest("[data-consent]")?.dataset.consent; if (!v) return;
+      try { localStorage.setItem(KEY, v); } catch {}
+      box.hidden = true;
+      if (v === "yes" && !window.gtag) load();
+    });
+    // withdrawing takes effect on the next page load, when the tag is no longer added
+    document.querySelector("[data-consent-reset]").addEventListener("click", () => { try { localStorage.removeItem(KEY); } catch {} box.hidden = false; });
+  })();
+</script>
 </body>
 </html>

@@ -1,51 +1,6 @@
 // Section fades: each block rises once as it comes into view.
 const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-// Entry: a noisy sensor trace settles to a calibrated 22.4 °C / 48.2 %, then the screen wipes up
-// and the hero rises. Plays once per tab (the head script decides); click or any key skips it.
-{
-  const html = document.documentElement, intro = document.querySelector(".intro");
-  if (intro && html.classList.contains("intro-play") && !html.classList.contains("intro-done")) {
-    try { sessionStorage.setItem("intro-seen", "1"); } catch {}
-    // the page must not move under the intro: start at the top (site.css also locks scrolling while it plays)
-    scrollTo(0, 0);
-    const line = intro.querySelector(".intro__line");
-    const temp = intro.querySelector("[data-intro-temp]"), hum = intro.querySelector("[data-intro-hum]");
-    const SETTLE = 1500, N = 90, seeds = Array.from({ length: N }, () => Math.random() * 2 - 1);
-    let t0 = null, over = false, hold;
-    const frame = (now) => {
-      if (over) return;
-      t0 ??= now;
-      const t = Math.min(1, (now - t0) / SETTLE), settled = 1 - (1 - t) ** 3, noise = 1 - settled;
-      line.setAttribute("points", seeds.map((seed, i) =>
-        `${((i / (N - 1)) * 1000).toFixed(1)},${(100 + noise * (seed * 70 + Math.sin(i * 0.45 + now / 90) * 25 * (Math.random() + 0.3))).toFixed(1)}`).join(" "));
-      temp.textContent = (22.4 * settled + noise * (Math.random() * 8 - 4)).toFixed(1);
-      hum.textContent = (48.2 * settled + noise * (Math.random() * 12 - 6)).toFixed(1);
-      if (t < 1) requestAnimationFrame(frame); else lock();
-    };
-    const lock = () => {
-      intro.classList.add("is-locked");
-      intro.querySelector(".intro__state").textContent = "Calibrated";
-      line.setAttribute("points", "0,100 1000,100");
-      temp.textContent = "22.4"; hum.textContent = "48.2";
-      hold = setTimeout(leave, 450);
-    };
-    const leave = () => {
-      if (over) return;
-      over = true; clearTimeout(hold); removeEventListener("keydown", skipKey);
-      scrollTo(0, 0);
-      intro.classList.add("is-leaving");
-      html.classList.add("intro-out");
-      intro.addEventListener("animationend", () => html.classList.add("intro-done"), { once: true });
-    };
-    // a skip key must not also scroll the page (Space, arrows and Page Down would)
-    const skipKey = (e) => { if (/^( |Spacebar|Arrow\w+|Page\w+|Home|End)$/.test(e.key)) e.preventDefault(); leave(); };
-    intro.addEventListener("click", leave);
-    addEventListener("keydown", skipKey);
-    requestAnimationFrame(frame);
-  }
-}
-
 // Reading meter across the top, and a cyan scan line that sweeps each picture once as it arrives.
 if (!still) {
   const meter = Object.assign(document.createElement("div"), { className: "scroll-meter" });
@@ -440,10 +395,7 @@ if (!still) {
         rollTo(0, 1700);
         setTimeout(() => { list.style.scrollSnapType = ""; }, 1750);
       };
-      const html = document.documentElement;
-      if (html.classList.contains("intro-play") && !html.classList.contains("intro-done")) {
-        new MutationObserver((m, o) => { if (html.classList.contains("intro-out") || html.classList.contains("intro-done")) { o.disconnect(); setTimeout(spin, 350); } }).observe(html, { attributes: true, attributeFilter: ["class"] });
-      } else spin();
+      spin();
     }
   }
 }
