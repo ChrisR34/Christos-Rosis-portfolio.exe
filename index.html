@@ -210,6 +210,38 @@
           </div>
         </div>
       </div>
+
+      <!-- Try it: the server's command dispatch rebuilt in the browser (site.js). A made-up climate chamber, not the real instrument. -->
+      <div class="try">
+        <div class="try__intro">
+          <h3 class="try__h">Try the server</h3>
+          <p class="muted">This runs a copy of the server’s command handling in your browser. Each command is looked up in a table of delegates, the same way the C# server works, and the reply comes back from a simulated climate chamber. Type <b>HELP</b> to see every command.</p>
+        </div>
+        <div class="ui ui-panel ui-term tryterm" data-tryterm>
+          <div class="ui-term__head">
+            <span class="ui-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="ui-term__title">telnet localhost 5000</span>
+            <span class="ui-spacer"></span>
+            <span class="ui-chip ui-chip--plain tryterm__state">Connected</span>
+          </div>
+          <div class="tryterm__out" role="log" aria-live="polite" aria-label="Server replies" data-try-out>
+            <p>Connected to the CC-200 demo server on port 5000.</p>
+            <p>Type a command and press Enter, or tap one below. <b>HELP</b> lists them all.</p>
+          </div>
+          <form class="tryterm__prompt" data-try-form autocomplete="off">
+            <label class="sr-only" for="try-in">Command to send to the server</label>
+            <span class="ui-term__sig" aria-hidden="true">&gt;</span>
+            <input id="try-in" class="tryterm__in" data-try-in spellcheck="false" autocapitalize="characters" maxlength="40" placeholder="READ:TEMP">
+          </form>
+          <div class="tryterm__chips" role="group" aria-label="Example commands">
+            <button type="button" data-try-cmd="READ:TEMP">READ:TEMP</button>
+            <button type="button" data-try-cmd="SET:RH 50">SET:RH 50</button>
+            <button type="button" data-try-cmd="STATUS">STATUS</button>
+            <button type="button" data-try-cmd="SET:RH 140">SET:RH 140</button>
+            <button type="button" data-try-cmd="HELP">HELP</button>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 

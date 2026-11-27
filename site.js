@@ -399,3 +399,51 @@ if (!still) {
     }
   }
 }
+
+// Try the server: the C# ApiHandler's dispatch rebuilt in JS. Each command maps to a handler (the C# delegates);
+// the "device" is a made-up climate chamber whose readings drift toward their set points.
+{
+  const term = document.querySelector("[data-tryterm]");
+  if (term) {
+    const out = term.querySelector("[data-try-out]"), form = term.querySelector("[data-try-form]"), input = term.querySelector("[data-try-in]");
+    const dev = { temp: 21.4, rh: 38.0, setTemp: 21.0, setRh: 40.0, fan: 1, started: Date.now() };
+    const dewPoint = () => { const a = 17.62, b = 243.12, g = Math.log(dev.rh / 100) + (a * dev.temp) / (b + dev.temp); return (b * g) / (a - g); };
+    setInterval(() => { // readings creep toward the set points with a little noise
+      dev.temp += (dev.setTemp - dev.temp) * 0.08 + (Math.random() - 0.5) * 0.06;
+      dev.rh += (dev.setRh - dev.rh) * 0.06 + (Math.random() - 0.5) * 0.2;
+    }, 1000);
+    const num = (v, lo, hi, name, unit, apply) => { // the server's validation on SET commands
+      const n = Number(v);
+      if (v === undefined || v === "" || !Number.isFinite(n)) return { err: `Invalid value for ${name} (use a number).` };
+      if (n < lo || n > hi) return { err: `${name} out of range (${lo} to ${hi} ${unit}).` };
+      apply(n); return `OK ${name}=${n}`;
+    };
+    const handlers = new Map([
+      ["HELP", () => "Commands:\n  ID?  STATUS  PING  ERR?\n  READ:TEMP  READ:HUM  READ:DEWPT\n  SET:TEMP <-20..60>  SET:RH <5..95>\n  SET:FAN <0|1>  CLEAR"],
+      ["ID?", () => "DemoLab,CC-200,SN-000123,FW-1.2"],
+      ["PING", () => "PONG"],
+      ["READ:TEMP", () => `${dev.temp.toFixed(2)} C`],
+      ["READ:HUM", () => `${dev.rh.toFixed(1)} %RH`],
+      ["READ:DEWPT", () => `${dewPoint().toFixed(2)} C`],
+      ["STATUS", () => `TEMP ${dev.temp.toFixed(2)} C (set ${dev.setTemp})\nRH ${dev.rh.toFixed(1)} % (set ${dev.setRh})\nFAN ${dev.fan ? "ON" : "OFF"}  UPTIME ${Math.round((Date.now() - dev.started) / 1000)} s`],
+      ["ERR?", () => "0,No errors"],
+      ["SET:TEMP", (v) => num(v, -20, 60, "TEMP", "C", (n) => { dev.setTemp = n; })],
+      ["SET:RH", (v) => num(v, 5, 95, "RH", "%", (n) => { dev.setRh = n; })],
+      ["SET:FAN", (v) => (v === "0" || v === "1" ? (dev.fan = Number(v), `OK FAN=${v}`) : { err: "Invalid value for FAN (use 0 or 1)." })],
+    ]);
+    const line = (text, cls) => { const p = document.createElement("p"); p.textContent = text; if (cls) p.className = cls; out.append(p); };
+    const send = (raw) => {
+      const cmd = raw.trim().replace(/\s+/g, " ").slice(0, 40);
+      if (!cmd) return;
+      line(cmd, "is-cmd");
+      const [key, arg] = cmd.toUpperCase().split(" ");
+      if (key === "CLEAR") { out.replaceChildren(); return; }
+      const h = handlers.get(key);
+      const reply = h ? h(arg) : { err: `Unknown command: ${cmd}` };
+      typeof reply === "string" ? line(reply) : line(reply.err, "is-err");
+      out.scrollTop = out.scrollHeight;
+    };
+    form.addEventListener("submit", (e) => { e.preventDefault(); send(input.value); input.value = ""; });
+    term.querySelectorAll("[data-try-cmd]").forEach((b) => b.addEventListener("click", () => send(b.dataset.tryCmd)));
+  }
+}
